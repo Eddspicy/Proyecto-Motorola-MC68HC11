@@ -3,11 +3,11 @@ import re
 def evaluar_direccionamiento(cadena):
     REL = re.compile(r"(B[CEGHLMNPRSV][ACEILNOQRST])\s([A-ZA-Z]{0,256})?")
     INH = re.compile(r"([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY]([ABDPSVXY])?)")
-    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)(\s)(#)([\$’])?([0-9A-F]{2,4}|[A-Za-z]{1})")
-    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})")
-    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY]([ABD])?)([\s]){1}([\$’])?([0-9A-F]{2,4}|[A-Za-z]{1})")
-    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,X)")
-    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,Y)")
+    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)(\s)(#)(\d{1,5}|(\$)([0-9A-F]{2,4}|([’])[A-Za-z]{1}))")
+    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)([\s]){1}(\d{1,3}|(\$)[0-9A-F]{2}|(\$)0[0-9A-F]|([’])[A-Za-z]{1})")
+    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY]([ABD])?)([\s]){1}(\d{1,5}|(\$)([0-9A-F]{2,4}|([’])[A-Za-z]{1}))")
+    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}(\d{1,5}|(\$)([0-9A-F]{2,4}|([’])[A-Za-z]{1}))(,X)")
+    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}(\d{1,5}|(\$)([0-9A-F]{2,4}|([’])[A-Za-z]{1}))(,Y)")
 
     if re.fullmatch(REL, cadena):
         return "Direccionamiento relativo"
