@@ -1,6 +1,3 @@
-# coding=utf8
-# the above tag defines encoding for this document and is for Python 2.x compatibility
-
 import re
 from io import open
 
@@ -27,5 +24,3 @@ for line in Primer_programa:
     Programa.append(line)
 
 print(Programa)
-#group se usa para traer un grupo del match, o es toda la cadena, 1 primera parte, etc
-#En la exprsion regular cada parentesis es una subcadena
