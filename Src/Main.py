@@ -3,9 +3,11 @@
 
 import re
 
-regex = r"b[ceghlmnprsv][aceilnoqrst](\s)?([a-zA-Z]{0,256})?"
+REL = re.compile(r"(b[ceghlmnprsv][aceilnoqrst])(\s)?([a-zA-Z]{0,256})")
 test_str = "bgt HOLA"
 
-match = re.fullmatch(regex, test_str)
+match = REL.match(test_str)
 
 print(match)
+
+print(match.groups())
