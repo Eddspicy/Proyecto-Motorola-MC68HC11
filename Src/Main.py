@@ -1,36 +1,11 @@
-import re
 from io import open
+import Precompilado
+import Compilado
 
-#ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([#\s]){1}([\$’])?([0-9A-F]{2,4}|[A-Za-z]{1})(,[XY])?")
-
-REL = re.compile(r"(b[ceghlmnprsv][aceilnoqrst])(\s[a-zA-Z]{0,256})?")
-INH = re.compile(r"([acdfilmnprstwx][abdeglnopstuwxy][abcdghilmoprstvxy]([abdpsvxy])?)")
-IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)(#)([\$’])?([0-9A-F]{2,4}|[A-Za-z]{1})")
-DIR = re.compile (r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY]([ABD])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})")
-EXT = re.compile (r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY]([ABD])?)([\s]){1}([\$’])?([0-9A-F]{2,4}|[A-Za-z]{1})")
-INDX = re.compile (r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,X)")
-INDY = re.compile (r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,Y)")
-
-
-Primer_programa = open("D:\Facultad\Semestre 2023-2\EyPC\Proyecto\Proyecto-Motorola-MC68HC11\prueba.asc", "r")
-Programa=[]
-match = True
-for line in Primer_programa:
-    Programa.append(line)
-    if(match == re.fullmatch(REL, line)):
-        print("Direccionamiento relativo")
-    elif(match == re.fullmatch(INH, line)):
-        print("Direccionamiento inherente")
-    elif(match == re.fullmatch(IMM, line)):
-        print("Direccionamiento inmediato")
-    elif(match == re.fullmatch(DIR, line)):
-        print("Direccionamiento directo")
-    elif(match == re.fullmatch(EXT, line)):
-        print("Direccionamiento EXTENDIDO")
-    elif(match == re.fullmatch(INDX, line)):
-        print("Direccionamiento indexado en X")
-    elif(match == re.fullmatch(INDY, line)):
-        print("Direccionamiento indexado en Y")
-for i in range (len(Programa)) :
-    print(Programa[i])
+def main(): 
+    archivo = open("D:\Facultad\Semestre 2023-2\EyPC\Proyecto\Proyecto-Motorola-MC68HC11\pruebaAZ.asc", "r")
+    for linea in archivo:
+        direccionamiento = Precompilado.precompilado(linea.strip())
+        print(f"Cadena: {linea.strip()}\nTipo de direccionamiento: {direccionamiento}\n")
+    archivo.close()
 ()
