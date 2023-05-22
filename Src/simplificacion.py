@@ -3,7 +3,7 @@ def obtener_primeras_letras_sin_repetir_desde_archivo(nombre_archivo):
     with open(nombre_archivo, 'r') as archivo:
         for linea in archivo:
             cadena = linea.strip()  # Eliminar espacios en blanco al inicio y final de la línea
-            primera_letra = cadena[3]
+            primera_letra = cadena[1]
             letras.add(primera_letra)
 
     letras_ordenadas = sorted(letras)
