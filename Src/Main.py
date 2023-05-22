@@ -14,7 +14,21 @@ INDY = re.compile (r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])
 def reconocimiento_modos(match_modos):
     Primer_programa = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/prueba.asc", "r")
     Programa=[]
+    match = True
     for line in Primer_programa:
         Programa.push(line)
         if(match == re.fullmatch(REL, line)):
+            print("Direccionamiento relativo")
+        elif(match == re.fullmatch(INH, line)):
+            print("Direccionamiento inherente")
+        elif(match == re.fullmatch(IMM, line)):
+            print("Direccionamiento inmediato")
+        elif(match == re.fullmatch(DIR, line)):
+            print("Direccionamiento directo")
+        elif(match == re.fullmatch(EXT, line)):
+            print("Direccionamiento EXTENDIDO")
+        elif(match == re.fullmatch(INDX, line)):
+            print("Direccionamiento indexado en X")
+        elif(match == re.fullmatch(INDY, line)):
+            print("Direccionamiento indexado en Y")
 ()
