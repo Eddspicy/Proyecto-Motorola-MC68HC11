@@ -11,24 +11,26 @@ EXT = re.compile (r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY]([ABD])?)([\s]
 INDX = re.compile (r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,X)")
 INDY = re.compile (r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY]([ABDELRT])?)([\s]){1}([\$’])?(([0-9A-F]{2}|(0[0-9A-F]))|[A-Za-z]{1})(,Y)")
 
-def reconocimiento_modos(match_modos):
-    Primer_programa = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/prueba.asc", "r")
-    Programa=[]
-    match = True
-    for line in Primer_programa:
-        Programa.push(line)
-        if(match == re.fullmatch(REL, line)):
-            print("Direccionamiento relativo")
-        elif(match == re.fullmatch(INH, line)):
-            print("Direccionamiento inherente")
-        elif(match == re.fullmatch(IMM, line)):
-            print("Direccionamiento inmediato")
-        elif(match == re.fullmatch(DIR, line)):
-            print("Direccionamiento directo")
-        elif(match == re.fullmatch(EXT, line)):
-            print("Direccionamiento EXTENDIDO")
-        elif(match == re.fullmatch(INDX, line)):
-            print("Direccionamiento indexado en X")
-        elif(match == re.fullmatch(INDY, line)):
-            print("Direccionamiento indexado en Y")
+
+Primer_programa = open("D:\Facultad\Semestre 2023-2\EyPC\Proyecto\Proyecto-Motorola-MC68HC11\prueba.asc", "r")
+Programa=[]
+match = True
+for line in Primer_programa:
+    Programa.append(line)
+    if(match == re.fullmatch(REL, line)):
+        print("Direccionamiento relativo")
+    elif(match == re.fullmatch(INH, line)):
+        print("Direccionamiento inherente")
+    elif(match == re.fullmatch(IMM, line)):
+        print("Direccionamiento inmediato")
+    elif(match == re.fullmatch(DIR, line)):
+        print("Direccionamiento directo")
+    elif(match == re.fullmatch(EXT, line)):
+        print("Direccionamiento EXTENDIDO")
+    elif(match == re.fullmatch(INDX, line)):
+        print("Direccionamiento indexado en X")
+    elif(match == re.fullmatch(INDY, line)):
+        print("Direccionamiento indexado en Y")
+for i in range (len(Programa)) :
+    print(Programa[i])
 ()
