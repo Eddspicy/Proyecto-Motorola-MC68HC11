@@ -1,0 +1,29 @@
+adca,89,2,2
+adcb,C9,2,2
+adda,8B,2,2
+addb,CB,2,2
+addd,C3,4,3
+anda,84,2,2
+andb,C4,2,2
+bita,85,2,2
+bitb,C5,2,2
+cmpa,81,2,2
+cmpb,C1,2,2
+cpd,1A 83,5,4
+cpx,8C,4,3
+cpy,18 8C,5,4
+eora,88,2,2
+eorb,C8,2,2
+ldaa,86,2,2
+ldab,C6,2,2
+ldd,CC,3,3
+lds,8E,3,3
+ldx,CE,3,3
+ldy,18 CE,4,4
+oraa,8A,2,2
+orab,CA,2,2
+sbca,82,2,2
+sbcb,C2,2,2
+suba,80,2,2
+subb,C0,2,2
+subd,83,4,3

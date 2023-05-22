@@ -1,0 +1,73 @@
+aba,1B,2,1
+abx,3A,3,1
+aby,18 3A,4,2
+asla,48,2,1
+aslb,58,2,1
+asld,5,3,1
+asra,47,2,1
+asrb,57,2,1
+cba,11,2,1
+clc,0C,2,1
+cli,0E,2,1
+clra,4F,2,1
+clrb,5F,2,1
+clv,0A,2,1
+coma,43,2,1
+comb,53,2,1
+daa,19,2,1
+deca,4A,2,1
+decb,5A,2,1
+des,34,3,1
+dex,0 9,3,1
+dey,18 09,4,2
+fdiv,0 3,41,1
+idiv,0 2,41,1
+inca,4C,2,1
+incb,5C,2,1
+ins,31,3,1
+inx,0 8,3,1
+iny,18 08,4,2
+lsla,48,2,1
+lslb,58,2,1
+lsld,0 5,3,1
+lsra,44,2,1
+lsrb,54,2,1
+lsrd,0 4,3,1
+mul,3D,10,1
+nega,40,2,1
+negb,50,2,1
+nop,0 1,2,1
+psha,36,3,1
+pshb,37,3,1
+pshx,3C,4,1
+pshy,18 3C,5,2
+pula,32,4,1
+pulb,33,4,1
+pulx,38,5,1
+puly,18 38,6,2
+rola,49,2,1
+rolb,59,2,1
+rora,46,2,1
+rorb,56,2,1
+rti,3B,12,1
+rts,39,5,1
+sba,10,2,1
+sec,OD,2,1
+sei,OF,2,1
+sev,OB,2,1
+stop,CF,2,1
+swi,3F,14,1
+tab,16,2,1
+tap,0 6,2,1
+tba,17,2,1
+tets,0 0,1,**
+tpa,0 7,2,1
+tsta,4D,2,1
+tstb,5D,2,1
+tsx,30,3,1
+tsy,18 30,4,2
+txs,35,3,1
+tys,18 35,4,2
+wai,3E,***,1
+xgdx,8F,3,1
+xgdy,18 8F,4,2

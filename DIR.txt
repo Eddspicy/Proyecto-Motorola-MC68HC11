@@ -1,0 +1,40 @@
+adca,99,3,2
+adcb,D9,3,2
+adda,9B,3,2
+addb,DB,3,2
+addd,D3,5,2
+anda,94,3,2
+andb,D4,3,2
+bclr,15,6,3
+bita,95,3,2
+bitb,D5,3,2
+brclr,13,6,4
+brset,12,6,4
+bset,14,6,3
+cmpa,91,3,2
+cmpb,D1,3,2
+cpd,1A 93,6,3
+cpx,9C,5,2
+cpy,18 9C,6,3
+eora,98,3,2
+eorb,D8,3,2
+jsr,9D,5,2
+ldaa,96,3,2
+ldab,D6,3,2
+ldd,DC,4,2
+lds,9E,4,2
+ldx,DE,4,2
+ldy,18 DE,5,3
+oraa,9A,3,2
+orab,DA,3,2
+sbca,92,3,2
+sbcb,D2,3,2
+staa,97,3,2
+stab,D7,3,2
+std,DD,4,2
+sts,9F,4,2
+stx,DF,4,2
+sty,18 DF,5,3
+suba,90,3,2
+subb,D0,3,2
+subd,93,5,2
