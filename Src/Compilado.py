@@ -12,7 +12,7 @@ def acortador_cadenas(cadena):
     return cadena_cut;
 
 def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
-
+    print("relativo")
 
 
 def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
