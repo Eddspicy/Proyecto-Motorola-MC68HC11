@@ -1,4 +1,6 @@
-def acortador_cadenas (cadena):
+import re
+
+def acortador_cadenas(cadena):
     cadena_cut = ""
     if len(cadena) >= 4:
         if cadena[3] == ',':
@@ -9,53 +11,18 @@ def acortador_cadenas (cadena):
         cadena_cut = cadena[:len(cadena)]
     return cadena_cut;
 
-def compilado_REL(instruccion) :
-    AREL = []
-    f_arel = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/REL.txt", "r")
-    for line in f_arel :
-        AREL.append(line)
-    for i in range (len(AREL)) :
-        if instruccion == acortador_cadenas(AREL[i]):
-            print("Si matchearon")
-def compilado_INH(instruccion):
-    AINH = []
-    f_inh = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/INH.txt", "r")
-    for line in f_inh :
-        AINH.append(line)
-    #for i in range (len(AINH)) :
-    #    print(AINH[i])
-def compilado_IMM(instruccion):
-    AIMM = []
-    f_aimm = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/IMM.txt", "r")
-    for line in f_aimm :
-        AIMM.append(line)
-    #for i in range (len(AIMM)) :
-    #    print(AIMM[i])
-def compilado_DIR(instruccion) :
-    ADIR = []
-    f_adir = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/DIR.txt", "r")
-    for line in f_adir :
-        ADIR.append(line)
-    #for i in range (len(ADIR)) :
-    #    print(ADIR[i])   
-def compilado_EXT(instruccion) :
-    AEXT = []
-    f_aext = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/EXT.txt", "r")
-    for line in f_aext :
-        AEXT.append(line)
-    #for i in range (len(AEXT)) :
-    #    print(AEXT[i])
-def compilado_INDX(instruccion) :
-    AINDX = []
-    f_aindx = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/INDX.txt", "r")
-    for line in f_aindx :
-        AINDX.append(line)
-    #for i in range (len(AINDX)) :
-    #    print(AINDX[i])
-def compilado_INDY(instruccion) :
-    AINDY = []
-    f_aindy = open("/home/eddspicy/Documents/Compilador Motorola MC68HC11/Proyecto-Motorola-MC68HC11/INDY.txt", "r")
-    for line in f_aindy :
-        AINDY.append(line)
-    #for i in range (len(AINDY)) :
-    #    print(AINDY[i])
+def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
+
+
+
+def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
+    print("inherente")
+
+
+def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler, stack_error, error_line, list_labels):
+    print("ALL5")
+    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s#)(\d{1,5}|\$[0-9A-F]{2,4}|’][A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s){1}(\d{1,3}|\$[0-9A-F]{2}|\$0[0-9A-F]|’[A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE) #Puede que la tercera condicion de operadores este de mas
+    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1})(,X)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1})(,Y)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
