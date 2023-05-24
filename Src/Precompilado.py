@@ -6,10 +6,10 @@ from Compilado import *
 def precompilado(cadena, mnemonicos_dir,mnemonicos_ext,mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, mnemonicos_inh, mnemonicos_rel, stack_compiler, stack_error,error_line, list_labels):
     REL = re.compile(r"(B[CEGHLMNPRSV][ACEILNOQRST])(\s[A-ZA-Z]{1,256})?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
     INH = re.compile(r"([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY][ABDPSVXY]?)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s#|\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1})(,[XY])?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s#|\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,[XY])?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
     GP1 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)")
     GP2 = re.compile(r"(\s#|\s){1}")
-    GP3 = re.compile(r"(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1})")
+    GP3 = re.compile(r"(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})")
     
     if re.fullmatch(REL, cadena):
        Matcher = re.split(REL, cadena)
