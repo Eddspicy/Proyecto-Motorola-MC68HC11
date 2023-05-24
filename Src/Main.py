@@ -46,6 +46,7 @@ def main():
         INDY.append(line)
     f_indy.close()
     #---------------------------------------------
+    #ABRIR PROGRAMA PARA PRECOMPILADO Y COMPILADO
     programa = open("pruebaTotal.asc", "r")
     stack_compiler = []
     stack_error = []
@@ -53,11 +54,11 @@ def main():
     error_line = 0
     for linea in programa:
         if linea.startswith(" "):
-            direccionamiento = precompilado(linea.strip(), DIR, EXT, IMM, INDX, INDY, INH, REL, stack_compiler, stack_error,error_line, list_labels)
+            precompilado(linea.strip(), DIR, EXT, IMM, INDX, INDY, INH, REL, stack_compiler, stack_error,error_line, list_labels)
         else:
-            print(f"Es una etiqueta, directiva o end: {linea.strip()}\n")
+            print(f"Es una etiqueta, directiva o end: {linea.strip()}\n") #FALTA TRATAMIENTO DE ETIQUETAS, VARIABLES, CONSTANTES Y DIRECTIVAS
             list_labels.append(linea.strip())
-    #CERRAR ARCHIVOS
     programa.close()
     #---------------------------------------------
+    
 main()

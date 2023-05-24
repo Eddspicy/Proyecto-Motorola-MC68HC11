@@ -1,17 +1,19 @@
 import re
 
-def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
+def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels): #FALTA COMPILACION DE ESTE MODO, ES DIFERENTE A LOS OTROS
     for i in mnemonicos:
         if instruccion[1] == acortador_mnemonicos(i):
             stack_compiler.push(acortador_opcode(i))
         #INTRODUCIR OPCODE DE LASA ETIQUETAS
 
 
-def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
+def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line): #FALTA COMPILACION DE ESTE MODO, ES DIFERENTE A LOS OTROS
     print("inherente")
     for i in mnemonicos:
         if instruccion[1] == acortador_mnemonicos(i):
             stack_compiler.push(acortador_opcode(i))
+
+#FALTA TAMBIEN HACER BIEN TODO LO DE LOS ERRORES, AUNQUE YA PUEDE GUARDARLOS
 
 def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler, stack_error, error_line, list_labels):
     print("ALL5")
@@ -23,14 +25,19 @@ def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm,
     
     tostr = "".join(instruccion) #SIRVE PARA VERFIFICAR EL DIRECCIONAMIENTO COMO CADENA MEDIANTE REGEX
 
+    #COMPILADO IMM
     if re.fullmatch(IMM, tostr):
         comparacion_menemonicos(instruccion, mnemonicos_imm, stack_compiler, stack_error, error_line)
+    #COMPILADO DIR
     if re.fullmatch(DIR, tostr):
         comparacion_menemonicos(instruccion, mnemonicos_dir, stack_compiler, stack_error, error_line)
+    #COMPILADRO EXT
     if re.fullmatch(EXT, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_ext, stack_compiler, stack_error, error_line)
+        comparacion_menemonicos(instruccion, mnemonicos_ext, stack_compiler, stack_error, error_line) #FALTA VER QUE PASA CUANDO LLEGAN ETIQUETAS
+    #COMPILADO INDX
     if re.fullmatch(INDX, tostr):
         comparacion_menemonicos(instruccion, mnemonicos_indx, stack_compiler, stack_error, error_line)
+    #COMPILADO INDY
     if re.fullmatch(INDY, tostr):
         comparacion_menemonicos(instruccion, mnemonicos_indy, stack_compiler, stack_error, error_line)
 
@@ -70,7 +77,7 @@ def tratamiento_de_operandos_ALL5(operando, cline, stack_compiler, stack_error):
             else:
                 stack_error.push("Error en el operando ingresado")
 
-            #CONVERSION ASCII
+    #CONVERSION ASCII
     elif verificador[0] == "’":
         conversion = hex(ord(operando[3][1:]))
         if acortador_bytes(cline) == 2:
@@ -89,7 +96,7 @@ def tratamiento_de_operandos_ALL5(operando, cline, stack_compiler, stack_error):
             else:
                 stack_error.push("Error en el operando ingresado")
             
-            #CONVERSION BINARIO
+    #CONVERSION BINARIO
     elif verificador[0] == "%":
         conversion = hex(int(operando[3][1:]),2)
         if acortador_bytes(cline) == 2:
@@ -108,7 +115,7 @@ def tratamiento_de_operandos_ALL5(operando, cline, stack_compiler, stack_error):
             else:
                 stack_error.push("Error en el operando ingresado")
                 
-            #CONVERSION DECIMAL
+    #CONVERSION DECIMAL
     else:
         conversion = hex(int(operando[3]))
         if acortador_bytes(cline) == 2:

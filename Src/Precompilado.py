@@ -18,7 +18,7 @@ def precompilado(cadena, mnemonicos_dir,mnemonicos_ext,mnemonicos_imm, mnemonico
 
     elif re.fullmatch(INH, cadena):
         Matcher = re.split(INH, cadena)
-        compilado_INH(Matcher, mnemonicos_rel, stack_compiler, stack_error, error_line)
+        compilado_INH(Matcher, mnemonicos_inh, stack_compiler, stack_error, error_line)
 
     elif re.fullmatch(r"([A-Z])*",cadena) == None and  re.fullmatch(INH, cadena) == None and  re.fullmatch(REL, cadena) == None:
         Matcher = re.split(ALL5, cadena)
