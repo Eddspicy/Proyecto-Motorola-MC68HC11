@@ -1,5 +1,120 @@
 import re
 
+def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
+    for i in mnemonicos:
+        if instruccion[1] == acortador_mnemonicos(i):
+            stack_compiler.push(acortador_opcode(i))
+        #INTRODUCIR OPCODE DE LASA ETIQUETAS
+
+
+def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
+    print("inherente")
+    for i in mnemonicos:
+        if instruccion[1] == acortador_mnemonicos(i):
+            stack_compiler.push(acortador_opcode(i))
+
+def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler, stack_error, error_line, list_labels):
+    print("ALL5")
+    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s#)(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s){1}(\d{1,3}|\$[0-9A-F]{2}|\$0[0-9A-F]|’[A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE) #Puede que la tercera condicion de operadores este de mas
+    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,X)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,Y)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    
+    tostr = "".join(instruccion) #SIRVE PARA VERFIFICAR EL DIRECCIONAMIENTO COMO CADENA MEDIANTE REGEX
+
+    if re.fullmatch(IMM, tostr):
+        for i in mnemonicos_imm:
+            #MNEMONICO
+            if instruccion[1] == acortador_mnemonicos(i):
+                if len(acortador_mnemonicos(i)) == 2:
+                    stack_compiler.push(acortador_opcode(i))
+                    tratamiento_de_operandos(instruccion, i, stack_compiler, stack_error)
+            elif len(acortador_mnemonicos(i)) > 2:
+                    stack_compiler.push(acortador_opcode(i[0:1]))
+                    stack_compiler.push(acortador_opcode(i[2:3]))
+                    tratamiento_de_operandos(instruccion, i, stack_compiler, stack_error)
+            else:
+                stack_error.push("El mnemonico no existe")
+            
+
+def tratamiento_de_operandos(operando, cline, stack_compiler, stack_error):
+    #OPERANDOS DIFERENCIACION
+    verificador = operando[3]
+    if verificador[0] == "$":
+        if acortador_bytes(cline) == 2:
+            if len(operando[3][1:]) == 2 and operando[3][1:] <= hex(255):
+                stack_compiler.push(operando[3])
+            else:
+                stack_error.push("Error en el operando ingresado")
+            
+        if acortador_bytes(cline) > 2:
+            if len(operando[3][1:]) == 3 and operando[3][1:] <= hex(4095):
+                stack_compiler.push(operando[3][1:2])
+                stack_compiler.push(operando[3][3])
+            elif len(operando[3][1:]) == 4 and operando[3][1:] <= hex(65535):
+                stack_compiler.push(operando[3][1:2])
+                stack_compiler.push(operando[3][3:4])
+            else:
+                stack_error.push("Error en el operando ingresado")
+
+            #CONVERSION ASCII
+    elif verificador[0] == "’":
+        conversion = hex(ord(operando[3][1:]))
+        if acortador_bytes(cline) == 2:
+            if len(conversion) == 2 and conversion <= hex(255):
+                stack_compiler.push(conversion)
+            else:
+                stack_error.push("Error en el operando ingresado")
+            
+        if acortador_bytes(cline) > 2:
+            if len(conversion) == 3 and conversion <= hex(4095):
+                stack_compiler.push(conversion[0:1]) #Empieza desde 0 porque en decimal no se utiliza ningun simbolo para especificarlo como en los demas operandos
+                stack_compiler.push(conversion[3][2])
+            elif len(conversion[3]) == 4 and conversion <= hex(65535):
+                stack_compiler.push(conversion[0:1])
+                stack_compiler.push(conversion[2:3])
+            else:
+                stack_error.push("Error en el operando ingresado")
+            
+            #CONVERSION BINARIO
+    elif verificador[0] == "%":
+        conversion = hex(int(operando[3][1:]),2)
+        if acortador_bytes(cline) == 2:
+            if len(conversion) == 2 and conversion <= hex(255):
+                stack_compiler.push(conversion)
+            else:
+                stack_error.push("Error en el operando ingresado")
+            
+        if acortador_bytes(cline) > 2:
+            if len(conversion) == 3 and conversion <= hex(4095):
+                stack_compiler.push(conversion[0:1])
+                stack_compiler.push(conversion[3][2])
+            elif len(conversion[3]) == 4 and conversion < hex(65535):
+                stack_compiler.push(conversion[0:1])
+                stack_compiler.push(conversion[2:3])
+            else:
+                stack_error.push("Error en el operando ingresado")
+                
+            #CONVERSION DECIMAL
+    else:
+        conversion = hex(int(operando[3]))
+        if acortador_bytes(cline) == 2:
+            if len(conversion) == 2 and conversion <= hex(255):
+                stack_compiler.push(conversion)
+            else:
+                stack_error.push("Error en el operando ingresado")
+            
+        if acortador_bytes(cline) > 2:
+            if len(conversion) == 3 and conversion <= hex(4095):
+                stack_compiler.push(conversion[0:1])
+                stack_compiler.push(conversion[3][2])
+            elif len(conversion[3]) == 4 and conversion <= hex(65535):
+                stack_compiler.push(conversion[0:1])
+                stack_compiler.push(conversion[2:3])
+            else:
+                stack_error.push("Error en el operando ingresado")
+
 def acortador_mnemonicos(cadena):
     cadena_cut = ""
     if len(cadena) >= 4:
@@ -27,151 +142,3 @@ def acortador_opcode(cadena):
         return opcode
     else:
         return print("Error al encontrar el opcode")
-
-
-def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
-    for i in mnemonicos:
-        if instruccion[1] == acortador_mnemonicos(i):
-            stack_compiler.push(acortador_opcode(i))
-        #INTRODUCIR OPCODE DE LASA ETIQUETAS
-
-
-def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
-    print("inherente")
-    for i in mnemonicos:
-        if instruccion[1] == acortador_mnemonicos(i):
-            stack_compiler.push(acortador_opcode(i))
-
-
-def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler, stack_error, error_line, list_labels):
-    print("ALL5")
-    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s#)(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s){1}(\d{1,3}|\$[0-9A-F]{2}|\$0[0-9A-F]|’[A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE) #Puede que la tercera condicion de operadores este de mas
-    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,X)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,Y)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    
-    tostr = "".join(instruccion) #SIRVE PARA VERFIFICAR EL DIRECCIONAMIENTO COMO CADENA MEDIANTE REGEX
-
-    if re.fullmatch(IMM, tostr):
-        for i in mnemonicos_imm:
-            #MNEMONICO
-            if instruccion[1] == acortador_mnemonicos(i):
-                if len(acortador_mnemonicos(i)) == 2:
-                    stack_compiler.push(acortador_opcode(i))
-                elif len(acortador_mnemonicos(i)) > 2:
-                    stack_compiler.push(acortador_opcode(i[0:1]))
-                    stack_compiler.push(acortador_opcode(i[2:3]))
-            else:
-                stack_error.push("El mnemonico no existe")
-
-           #OPERANDOS DIFERENCIACION
-            verificador = instruccion[3]
-            if verificador[0] == "$":
-                if acortador_bytes(i) == 2:
-                    if len(instruccion[3][1:]) == 2:
-                        stack_compiler.push(instruccion[3])
-                else:
-                    stack_error.push("Error en el operando ingresado")
-            
-                if acortador_bytes(i) > 2:
-                    if len(instruccion[3][1:]) == 3:
-                        stack_compiler.push(instruccion[3][1:2])
-                        stack_compiler.push(instruccion[3][3])
-                    elif len(instruccion[3][1:]) == 4:
-                        stack_compiler.push(instruccion[3][1:2])
-                        stack_compiler.push(instruccion[3][3:4])
-                else:stack_error.push("Error en el operando ingresado")
-
-            #CONVERSION ASCII
-            elif verificador[0] == "’":
-                conversion = hex(ord(instruccion[3[1:]]))
-                if acortador_bytes(i) == 2:
-                    if len(conversion) == 2:
-                        stack_compiler.push(conversion)
-                else:
-                    stack_error.push("Error en el operando ingresado")
-            
-                if acortador_bytes(i) > 2:
-                    if len(conversion) == 3:
-                        stack_compiler.push(conversion[0:1]) #Empieza desde 0 porque en decimal no se utiliza ningun simbolo para especificarlo como en los demas operandos
-                        stack_compiler.push(conversion[3][2])
-                    elif len(conversion[3]) == 4:
-                        stack_compiler.push(conversion[0:1])
-                        stack_compiler.push(conversion[2:3])
-                    else:
-                        stack_error.push("Error en el operando ingresado")
-            
-            #CONVERSION BINARIO
-            elif verificador[0] == "%":
-                conversion = hex(int(instruccion[3][1:]),2)
-                if acortador_bytes(i) == 2:
-                    if len(conversion) == 2:
-                        stack_compiler.push(conversion)
-                else:
-                    stack_error.push("Error en el operando ingresado")
-            
-                if acortador_bytes(i) > 2:
-                    if len(conversion) == 3:
-                        stack_compiler.push(conversion[0:1])
-                        stack_compiler.push(conversion[3][2])
-                    elif len(conversion[3]) == 4 and conversion < hex(65535):
-                        stack_compiler.push(conversion[0:1])
-                        stack_compiler.push(conversion[2:3])
-                    else:
-                        stack_error.push("Error en el operando ingresado")
-                
-            #CONVERSION DECIMAL
-            else:
-                conversion = hex(int(instruccion[3]))
-                if acortador_bytes(i) == 2:
-                    if len(conversion) == 2:
-                        stack_compiler.push(conversion)
-                else:
-                    stack_error.push("Error en el operando ingresado")
-            
-                if acortador_bytes(i) > 2:
-                    if len(conversion) == 3:
-                        stack_compiler.push(conversion[0:1])
-                        stack_compiler.push(conversion[3][2])
-                    elif len(conversion[3]) == 4 and conversion < hex(65535):
-                        stack_compiler.push(conversion[0:1])
-                        stack_compiler.push(conversion[2:3])
-                    else:
-                        stack_error.push("Error en el operando ingresado")
-            
-            
-
-
-    elif re.fullmatch(DIR, tostr):
-        for i in mnemonicos_dir:
-            if instruccion[1] == acortador_mnemonicos(i):
-                stack_compiler.push(acortador_opcode(i))
-            else:
-                stack_error.push("El mnemonico no existe")
-            if len(instruccion[3]) <= 2:
-                stack_compiler.push(instruccion[3])
-            else:
-                 stack_error.push("El operando ingreso es incorrecto")
-
-    elif re.fullmatch(EXT, tostr):
-        for i in mnemonicos_ext:
-            if instruccion[1] == acortador_mnemonicos(i):
-                stack_compiler.push(acortador_opcode(i))
-            else:
-                stack_error.push("El mnemonico no existe")
-
-    elif re.fullmatch(INDY, tostr):
-        for i in mnemonicos_indy:
-            if instruccion[1] == acortador_mnemonicos(i):
-                stack_compiler.push(acortador_opcode(i))
-            else:
-                stack_error.push("El mnemonico no existe")
-
-    elif re.fullmatch(INDX, tostr):
-        for i in mnemonicos_indx:
-            if instruccion[1] == acortador_mnemonicos(i):
-                stack_compiler.push(acortador_opcode(i))
-            else:
-                stack_error.push("El mnemonico no existe")
-            
