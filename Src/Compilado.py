@@ -24,21 +24,33 @@ def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm,
     tostr = "".join(instruccion) #SIRVE PARA VERFIFICAR EL DIRECCIONAMIENTO COMO CADENA MEDIANTE REGEX
 
     if re.fullmatch(IMM, tostr):
-        for i in mnemonicos_imm:
-            #MNEMONICO
-            if instruccion[1] == acortador_mnemonicos(i):
-                if len(acortador_mnemonicos(i)) == 2:
-                    stack_compiler.push(acortador_opcode(i))
-                    tratamiento_de_operandos(instruccion, i, stack_compiler, stack_error)
+        comparacion_menemonicos(instruccion, mnemonicos_imm, stack_compiler, stack_error, error_line)
+    if re.fullmatch(DIR, tostr):
+        comparacion_menemonicos(instruccion, mnemonicos_dir, stack_compiler, stack_error, error_line)
+    if re.fullmatch(EXT, tostr):
+        comparacion_menemonicos(instruccion, mnemonicos_ext, stack_compiler, stack_error, error_line)
+    if re.fullmatch(INDX, tostr):
+        comparacion_menemonicos(instruccion, mnemonicos_indx, stack_compiler, stack_error, error_line)
+    if re.fullmatch(INDY, tostr):
+        comparacion_menemonicos(instruccion, mnemonicos_indy, stack_compiler, stack_error, error_line)
+
+
+def comparacion_menemonicos(instruccion, mnemonicos, stack_compiler, stack_error, error_line):
+    for i in mnemonicos:
+    #MNEMONICO
+        if instruccion[1] == acortador_mnemonicos(i):
+            if len(acortador_mnemonicos(i)) == 2:
+                stack_compiler.push(acortador_opcode(i))
+                tratamiento_de_operandos_ALL5(instruccion, i, stack_compiler, stack_error)
             elif len(acortador_mnemonicos(i)) > 2:
-                    stack_compiler.push(acortador_opcode(i[0:1]))
-                    stack_compiler.push(acortador_opcode(i[2:3]))
-                    tratamiento_de_operandos(instruccion, i, stack_compiler, stack_error)
-            else:
-                stack_error.push("El mnemonico no existe")
+                stack_compiler.push(acortador_opcode(i[0:1]))
+                stack_compiler.push(acortador_opcode(i[2:3]))
+                tratamiento_de_operandos_ALL5(instruccion, i, stack_compiler, stack_error)
+        else:
+            stack_error.push("El mnemonico no existe")
             
 
-def tratamiento_de_operandos(operando, cline, stack_compiler, stack_error):
+def tratamiento_de_operandos_ALL5(operando, cline, stack_compiler, stack_error):
     #OPERANDOS DIFERENCIACION
     verificador = operando[3]
     if verificador[0] == "$":
