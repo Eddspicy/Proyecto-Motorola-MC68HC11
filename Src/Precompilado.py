@@ -23,20 +23,20 @@ def precompilado(cadena, mnemonicos_dir,mnemonicos_ext,mnemonicos_imm, mnemonico
     elif re.fullmatch(r"([A-Z])*",cadena) == None and  re.fullmatch(INH, cadena) == None and  re.fullmatch(REL, cadena) == None:
         Matcher = re.split(ALL5, cadena)
         if re.fullmatch(GP1, Matcher[1]):
-            print("El mnemonico existe dentro de los 5 modos")
+            #El mnemonico existe dentro de alguno de los 5 modos o es una subcadena de la ER valida
             if re.fullmatch(GP2, Matcher[2]):
-                print("La sintaxis es correcta para alguna de las 5")
+                #La sintaxis es correcta para alguna de las 5
                 if re.fullmatch(GP3,  Matcher[3]):
-                    print(Matcher)
-                    print("El operando existe")
+                    #El operando existe
                     compilado_ALL5 (Matcher, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler, stack_error, error_line, list_labels)
                     Matcher.clear
                 else:
-                    print("No existe operadno")
+                    print("No existe operando")
+                    stack_error.push("Error en linea:"+error_line+",no existe un operando")
             else:
-                print("sintaxis incorrecta")
+                stack_error.push("Error en linea:"+error_line+",sintaxis incorrecta")
     #DEBE HABER UN ELIF MAS PARA LA INSTRUCCION JMP
         else:
-            print("no existe el mnemonico")
+           stack_error.push("Error en linea:"+error_line+",no existe el mnemonico")
     else:
-        print("No se ajusta aningun caso conocido, error")
+        stack_error.push("Error en linea:"+error_line+",no existe el mnemonico o se ingreso algo que no tiene que ver con el lenguaje")

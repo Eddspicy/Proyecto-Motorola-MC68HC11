@@ -1,6 +1,6 @@
 import re
 
-def acortador_cadenas(cadena):
+def acortador_mnemonicos(cadena):
     cadena_cut = ""
     if len(cadena) >= 4:
         if cadena[3] == ',':
@@ -11,8 +11,29 @@ def acortador_cadenas(cadena):
         cadena_cut = cadena[:len(cadena)]
     return cadena_cut;
 
+def acortador_bytes(cadena):
+    byte = cadena.split(',')
+    if len(byte) > 1:
+        return byte[-1].strip()
+    else:
+        return print("Error al obtener los bytes de la instrucción")
+
+def acortador_opcode(cadena):
+    primera_coma = cadena.find(',')
+    segunda_coma = cadena.find(',', primera_coma + 1)
+
+    if primera_coma != -1 and segunda_coma != -1:
+        opcode = cadena[primera_coma + 1:segunda_coma].strip()
+        return opcode
+    else:
+        return print("Error al encontrar el opcode")
+
+
 def compilado_REL (instruccion, mnemonicos, stack_compiler, stack_error, error_line, list_labels):
     print("relativo")
+    for i in mnemonicos:
+        if instruccion[1] == acortador_mnemonicos(i):
+            stack_compiler.push(acortador_opcode(i))
 
 
 def compilado_INH (instruccion, mnemonicos, stack_compiler, stack_error,error_line):
