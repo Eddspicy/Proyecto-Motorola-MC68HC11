@@ -101,7 +101,7 @@ def pruebas():
     list_variables = []
     list_constantes = []
     line = 0
-    dir_mem = int(8000, 16)
+    dir_mem = hex(8000)
 
     with open("down.ASC","r") as archivo:
 
@@ -111,7 +111,9 @@ def pruebas():
             if re.fullmatch(r'', linea):
                 print("se detecto una linea en blanco: " +linea)
             elif re.fullmatch(variables, linea):
-                print("se detecto una variable: " +linea)
+                #print("se detecto una variable: " +linea)
+                Matcher = re.split(variables, linea)
+                print("Prueba:"+Matcher[1])
             elif re.fullmatch(constantes, linea):
                 print("se detecto una constante: " +linea)
             elif re.fullmatch(comentarios, linea):
@@ -122,7 +124,7 @@ def pruebas():
                 print("se detecto una instruccion: " +linea)
                 #precompilado(linea.strip(), DIR, EXT, IMM, INDX, INDY, INH, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error,error_line, list_labels,dir_mem
             else:
-                stack_error.append(CONS_009+line)
+                stack_error.append(CONS_009+str(line))
 
 pruebas()
 
