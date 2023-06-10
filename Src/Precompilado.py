@@ -18,9 +18,9 @@ CONS_012 = "012   SE INGRESO ALGO QUE NADA QUE VER  - Error en linea:"
 # PROCESAR VARIABLES Y CONSTANTES DESDE AQUI PARA MANDARLAS CON SU VALOR DE OPERANDO O GENERAR LOS ERRORES, VER QUE HACER CON JMP SI AQUI O ALLA
 
 def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
-    ER_REL = re.compile(r"(B[CEGHLMNPRSV][ACEILNOQRST])(\s[A-ZA-Z]{1,256})?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    ER_REL = re.compile(r"\b((B[CEGHLMNPRSV][ACEILNOQRST])(\s[A-ZA-Z]{1,256})?(\s\*[A-Z]*)?)\b", flags= re.IGNORECASE)
     ER_INH = re.compile(r"([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY][ABDPSVXY]?)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    ER_ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s#|\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16}|(([A-Z0-9]|\_)+))(,[XY])?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+    ER_ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s#|\s){1}(\d{1,5}|\$[0-9A-F]{2,4}||'\S{1}|%[0-1]{1,16}|(([A-Z0-9]|\_)+))(,[XY])?(\s*\*[A-Z]*)?", flags= re.IGNORECASE)
     #GP1 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)")
     #GP2 = re.compile(r"(\s#|\s){1}")
     #GP3 = re.compile(r"(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})")
@@ -42,6 +42,10 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
         #compilado_INH(Matcher, mnemonicos_inh, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
         print("instruccion inherente:"+instruccion)
     else:
+        Matcher = re.split(ER_ALL5, instruccion, maxsplit=2)
+        print(Matcher)
+
+    """
         print("Grupos de instruccion:"+str(line))
         if re.search(GP1, instruccion):
             Matcher = re.findall(GP1, instruccion)
@@ -59,6 +63,7 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
             Matcher = re.findall(GP5, instruccion)
             print(Matcher)
         print("fin del grupo")
+    """
 
 
 """
