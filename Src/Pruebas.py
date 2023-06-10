@@ -100,6 +100,7 @@ def pruebas():
     list_labels = [] #(cadenas con las etiquetas)
     list_variables = []
     list_constantes = []
+    list_comentarios = []
     line = 0
     dir_mem = hex(8000)
 
@@ -109,22 +110,51 @@ def pruebas():
             
             linea = linea.rstrip() #se uso porque de alguna manera se tienen espacios, tabulaciones saltos a final de las lineas y las ER no detectan bien por eso
             if re.fullmatch(r'', linea):
-                print("se detecto una linea en blanco: " +linea)
+                line +=1
             elif re.fullmatch(variables, linea):
+                line +=1
                 #print("se detecto una variable: " +linea)
                 Matcher = re.split(variables, linea)
-                print("Prueba:"+Matcher[1])
+                list_variables.append((Matcher[1],Matcher[6]))
             elif re.fullmatch(constantes, linea):
-                print("se detecto una constante: " +linea)
+                line +=1
+                #print("se detecto una constante: " +linea)
+                Matcher = re.split(constantes, linea)
+                list_constantes.append((Matcher[1],Matcher[6]))
             elif re.fullmatch(comentarios, linea):
-                print("se detecto un comentario: " +linea)
+                line +=1
+                list_comentarios.append((linea, line))
             elif re.fullmatch(etiquetas, linea) and verificar_palabra_reservada(linea):
-                print("se detecto una etiqueta: " +linea)
+                line +=1
+                #print("se detecto una etiqueta: " +linea)
+                list_labels.append((linea,hex(0),line))
             elif re.match(r'\s+', linea):
-                print("se detecto una instruccion: " +linea)
-                #precompilado(linea.strip(), DIR, EXT, IMM, INDX, INDY, INH, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error,error_line, list_labels,dir_mem
+                line +=1
+                #print("se detecto una instruccion: " +linea)
+                precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
+                line +=1
                 stack_error.append(CONS_009+str(line))
+    
+    print("PRUBA CONSTANTES")
+    for i in list_constantes:
+        print(i)
+
+    print("PRUBA VARIABLES")
+    for i in list_variables:
+        print(i)
+
+    print("PRUBA COMENTARIOS")
+    for i in list_comentarios:
+        print(i)
+
+    print("PRUBA ETIQUETAS")
+    for i in list_labels:
+        print(i)
+
+    print("PRUBA ERRORES")
+    for i in stack_error:
+        print(i)
 
 pruebas()
 

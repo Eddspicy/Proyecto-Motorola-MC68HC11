@@ -70,9 +70,9 @@ def main():
     dir_mem = hex(8000)
 
     for linea in programa:
-        if linea.startswith(" "):
+        #if linea.startswith(" "):
             precompilado(linea.strip(), DIR, EXT, IMM, INDX, INDY, INH, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error,error_line, list_labels,dir_mem)
-        else:
+        #else:
             print(f"Es una etiqueta, directiva o end: {linea.strip()}\n") #FALTA TRATAMIENTO DE ETIQUETAS, VARIABLES, CONSTANTES Y DIRECTIVAS
             list_labels.append(linea.strip())
     programa.close()
