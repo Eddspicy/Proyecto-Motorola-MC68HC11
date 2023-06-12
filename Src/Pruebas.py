@@ -136,23 +136,23 @@ def pruebas():
                 line +=1
                 stack_error.append(CONS_009+str(line))
     
-    print("PRUBA CONSTANTES")
+    print("PRUEBA CONSTANTES")
     for i in list_constantes:
         print(i)
 
-    print("PRUBA VARIABLES")
+    print("PRUEBA VARIABLES")
     for i in list_variables:
         print(i)
 
-    print("PRUBA COMENTARIOS")
+    print("PRUEBA COMENTARIOS")
     for i in list_comentarios:
         print(i)
 
-    print("PRUBA ETIQUETAS")
+    print("PRUEBA ETIQUETAS")
     for i in list_labels:
         print(i)
 
-    print("PRUBA ERRORES")
+    print("PRUEBA ERRORES")
     for i in stack_error:
         print(i)
 
