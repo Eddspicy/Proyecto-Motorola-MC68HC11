@@ -89,13 +89,13 @@ def pruebas():
     variables = re.compile(r"(([A-Z0-9]|\_)+)((\s)+EQU(\s)+)(\$00[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
     constantes = re.compile(r"(([A-Z0-9]|\_)+)(\s)+(EQU)(\s)+(\$10[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
     comentarios = re.compile(r"(\*(\w|\W)*)")
-    etiquetas = re.compile(r"(([A-Z]|[\W]|[\_])*)", flags=re.IGNORECASE) #no debe detectar espacios ni lineas en blanco
+    etiquetas = re.compile(r"(([A-Z]|[\_])*)", flags=re.IGNORECASE) #no debe detectar espacios ni lineas en blanco
 
     #ARREGLOS PARA EL COMPILADO
 
-    stack_compiler_vls = [] #(codigo objeto, linea de codigo original, label, lb_cod, dir_mem)
+    stack_compiler_vls = [] #(codigo objeto, linea de codigo original, sc , dir_mem, comentario)
     stack_compiler_s19 = [] #(codigo objeto en pila)
-    stack_compiler_html = [] #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, label, lb_cod,  comentario, dir_mem)
+    stack_compiler_html = [] #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, sc , dir_mem, comentario)
     stack_error = [] #(cadenas con los errores)
     list_labels = [] #(cadenas con las etiquetas)
     list_variables = []
