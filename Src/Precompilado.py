@@ -1,5 +1,4 @@
 import re
-from Compilado import *
 
 #Errores
 CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:"
@@ -51,7 +50,9 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
     ER_EXT = re.compile(r"^([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?$", flags=re.IGNORECASE)
     ER_INDX = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?(,X)(\s\*[A-Z]*)?$", flags= re.IGNORECASE)
     ER_INDY = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?(,Y)(\s\*[A-Z]*)?$", flags= re.IGNORECASE)
-   
+    
+    ER_OP = re.compile(r"^(\d{1,5}|\$[0-9A-F]{2,4}|'\S{1}|%[0-1]{1,16}|\w+)(,[XY])?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
+    ER_MNE = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)$", flags= re.IGNORECASE)
 
     
     #Matcher =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
@@ -66,40 +67,44 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
         #compilado_INH(Matcher, mnemonicos_inh, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
         print("instruccion inherente:"+instruccion)
  
-    elif re.fullmatch(ER_ALL5, instruccion):
+    elif re.match(ER_ALL5, instruccion):
         grupos = re.split(ER_ALL5, instruccion)
+        
         if verificar_palabra_reservada(grupos[1]):
             print("Existe la palabra rservada:"+instruccion)
-            if re.fullmatch(r"\w+", grupos[3]):
+            
+            if re.fullmatch(r"[0-9]+", grupos[3]):
+                print("No se requiere hacer cambio de variable:"+instruccion)
+            
+            elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
+                
                 nombre = grupos[3]
+                #COMPROBACION DE VARIABLES
                 for i in range (len(list_variables)):
                     if grupos[3] == list_variables[i][0]:
                         instruccion = instruccion.replace(grupos[3], list_variables[i][1])
-                        nombre = nombre.replace(grupos[3], list_variables[i][1])
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_002+str(line))
+                        nombre = nombre.replace(grupos[3], "variable")
                 
+                #COMPROBACION DE CONSTANTES
                 for i in range (len(list_constantes)):
                     if grupos[3] == list_constantes[i][0]:
                         instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
-                        nombre = nombre.replace(grupos[3], list_constantes[i][1])
+                        nombre = nombre.replace(grupos[3], "constante")
+                
+                #COMPROBACION DE ETIQUETAS
+                for i in range (len(list_labels)):
+                    if grupos[3] == list_labels[i][0]:
+                        instruccion = instruccion.replace(grupos[3], list_labels[i][0])
+                        nombre = nombre.replace(grupos[3], "etiqueta")
+
                 if nombre == grupos[3]:
                     stack_error.append(CONS_001+str(line))
+                if nombre == grupos[3]:
+                    stack_error.append(CONS_002+str(line))
+                if nombre == grupos[3]:
+                    stack_error.append(CONS_003+str(line))
 
                 print("Se asigno un valor:"+instruccion)
-                
-
-                """
-                for i, j  in zip (list_variables, list_constantes):
-                    if grupos[3] == list_variables[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_variables[i][0])
-                    else:
-                        stack_error.append(CONS_002+str(line))
-                    if grupos[3] == list_constantes[j][0]:
-                        instruccion = instruccion.replace(grupos[3], list_variables[i][0])
-                    else:
-                        stack_error.append(CONS_001+str(line))
-                """
 
         else:
             stack_error.append(CONS_004+str(line))
@@ -125,4 +130,49 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
     else:
         print("instruccinstruccion no coincide con el patrón:"+instruccion)
         print("----------------------------------------")
+
+    
+    elif re.fullmatch(ER_ALL5, instruccion):
+        grupos = re.split(ER_ALL5, instruccion)
+        
+        if verificar_palabra_reservada(grupos[1]):
+            print("Existe la palabra rservada:"+instruccion)
+
+            if re.fullmatch(r"[0-9]+", grupos[3]):
+            
+            if re.fullmatch(r"[0-9]+", grupos[3]):
+                print("No se requiere hacer cambio de variable:"+instruccion)
+            
+            elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
+                
+                nombre = grupos[3]
+                #COMPROBACION DE VARIABLES
+                for i in range (len(list_variables)):
+                    if grupos[3] == list_variables[i][0]:
+                        instruccion = instruccion.replace(grupos[3], list_variables[i][1])
+                        nombre = nombre.replace(grupos[3], "variable")
+                
+                #COMPROBACION DE CONSTANTES
+                for i in range (len(list_constantes)):
+                    if grupos[3] == list_constantes[i][0]:
+                        instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
+                        nombre = nombre.replace(grupos[3], "constante")
+                
+                #COMPROBACION DE ETIQUETAS
+                for i in range (len(list_labels)):
+                    if grupos[3] == list_labels[i][0]:
+                        instruccion = instruccion.replace(grupos[3], list_labels[i][0])
+                        nombre = nombre.replace(grupos[3], "etiqueta")
+
+                if nombre == grupos[3]:
+                    stack_error.append(CONS_001+str(line))
+                if nombre == grupos[3]:
+                    stack_error.append(CONS_002+str(line))
+                if nombre == grupos[3]:
+                    stack_error.append(CONS_003+str(line))
+
+                print("Se asigno un valor:"+instruccion)
+
+        else:
+            stack_error.append(CONS_004+str(line))
         """

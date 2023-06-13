@@ -127,7 +127,7 @@ def pruebas():
             elif re.fullmatch(etiquetas, linea) and verificar_palabra_reservada(linea):
                 line +=1
                 #print("se detecto una etiqueta: " +linea)
-                list_labels.append((linea,hex(0),line))
+                list_labels.append((linea.strip(), hex(0), line))
             elif re.match(r'\s+', linea):
                 line +=1
                 #print("se detecto una instruccion: " +linea)
