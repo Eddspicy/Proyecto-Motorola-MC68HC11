@@ -145,34 +145,59 @@ def pruebas():
     for i in range (len(stack_compiler_html)):
         if stack_compiler_html[i][5] == "ns":
             fstack_compiler_html.append((stack_compiler_html[i][0],stack_compiler_html[i][1],stack_compiler_html[i][2],stack_compiler_html[i][3],stack_compiler_html[i][4], stack_compiler_html[i][5],stack_compiler_html[i][6],stack_compiler_html[i][7],stack_compiler_html[i][8]))
+    
+    stack_compiler_vls.clear()
+    stack_compiler_html.clear()
 
+    fostack_compiler_vls = sorted(fstack_compiler_vls, key=lambda x: x[3])
+    fostack_compiler_html = sorted(fstack_compiler_html, key=lambda x: x[6])
+
+    fstack_compiler_vls.clear()
+    fstack_compiler_html.clear()
+
+
+
+#PRINTS DE CONTROL DE FLUJO
+    print("-------------------------------------------------")
     print("PRUEBA CONSTANTES")
     for i in list_constantes:
         print(i)
 
+    print("-------------------------------------------------")
     print("PRUEBA VARIABLES")
     for i in list_variables:
         print(i)
 
+    print("-------------------------------------------------")
     print("PRUEBA COMENTARIOS")
     for i in list_comentarios:
         print(i)
 
+    print("-------------------------------------------------")
     print("PRUEBA ETIQUETAS")
     for i in list_labels:
         print(i)
 
+    print("-------------------------------------------------")
     print("PRUEBA ERRORES")
     for i in stack_error:
         print(i)
 
+    print("-------------------------------------------------")
     print("PRUEBA VLS")
-    for i in fstack_compiler_vls:
+    for i in fostack_compiler_vls:
+        print(i)
+
+    print("-------------------------------------------------")    
+    print("PRUEBA HTML")
+    for i in fostack_compiler_html:
         print(i)
     
-    print("PRUEBA HTML")
-    for i in fstack_compiler_html:
+    print("-------------------------------------------------")
+    print("PRUEBA S19")
+    for i in stack_compiler_s19:
         print(i)
+    print("-------------------------------------------------")
 
 pruebas()
 
