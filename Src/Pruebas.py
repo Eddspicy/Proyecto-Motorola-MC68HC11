@@ -69,11 +69,12 @@ def pruebas():
                 end = linea.strip()
     
     #SOLO EJECUTAR SI YA SE PRESENTARA O SE ESTA SEGURO DE LA COMPILACION
+    """
     if ctrl == False:
         stack_error.append(CONS_010)
     else:
         borrar_linea("down.ASC", end)
-
+    """
 
             
     with open("down.ASC","r") as archivo:
