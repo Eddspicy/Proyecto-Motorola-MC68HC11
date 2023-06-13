@@ -12,8 +12,11 @@ CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:"
 CONS_008 = "008   SALTO RELATIVO MUY LEJANO - Error en linea:"
 CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:" #YA SE USO
 CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
+SALTOS  = ['bcc', 'bcs', 'beq', 'bge', 'bgt', 'bhi', 'bhs', 'ble', 'blo', 'bls', 'blt', 'bmi', 'bne', 'bpl', 'bra', 'brn', 'bsr', 'bvc', 'bvs', 'jmp', 'jsr']
 
 # PROCESAR VARIABLES Y CONSTANTES DESDE AQUI PARA MANDARLAS CON SU VALOR DE OPERANDO O GENERAR LOS ERRORES, VER QUE HACER CON JMP SI AQUI O ALLA
+
+
 def verificar_palabra_reservada(texto):
     palabras = [
         'aba', 'abx', 'aby', 'adca', 'adcb', 'adda', 'addb', 'addd', 'anda', 'andb',
@@ -102,7 +105,11 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
                         stack_error.append(CONS_003+str(line))
 
                     print("Se asigno un valor:"+instruccion) #LLAMAR A COMPILADO AQUÍ SI ES VARIABLE, CONSTANTE O ETIQUETA
-                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+                    grupos[1] = grupos[1].lower()
+                    if grupos[1] in SALTOS:
+                        return False
+                    else:
+                        compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
 
                 else:# PARA CASOS DONDE NO ES VARIABLE, CONSTANTE O ETIQUETA
                     compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
@@ -112,26 +119,3 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
             stack_error.append(CONS_004+str(line))
     else:
         stack_error.append(CONS_006+str(line)) #falta tratar directiva fcb para que no llegue aqui
-
-        """
-        #PRINTS DE CONTROL DE GRUPOS
-        print("instruccion original:",instruccion)
-        print("Grupos subdivididos:")
-        print("grupo1:")
-        print(grupos[1])
-        print("grupo2:")
-        print(grupos[2])
-        print("grupo3:")
-        print(grupos[3])
-        print("grupo4:")
-        print(grupos[4])
-        print("grupo5:")
-        print(grupos[5])
-        #for i, grupo in enumerate(grupos.groups(), start=1):
-           # print("grupo:"+str(i)+ grupo[i])
-            #print(f"Grupo {i}: {grupo}")
-        print("----------------------------------------")
-    else:
-        print("instruccinstruccion no coincide con el patrón:"+instruccion)
-        print("----------------------------------------")
-        """
