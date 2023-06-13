@@ -1,42 +1,6 @@
 import re
 from Precompilado import *
-
-CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:"
-CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:"
-CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:"
-CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:"
-CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:"
-CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:"
-CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:"
-CONS_008 = "008   SALTO RELATIVO MUY LEJANO - Error en linea:"
-CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:"
-CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
-
-def verificar_palabra_reservada(texto):
-    palabras = [
-        'aba', 'abx', 'aby', 'adca', 'adcb', 'adda', 'addb', 'addd', 'anda', 'andb',
-        'asl', 'asla', 'aslb', 'asld', 'asr', 'asra', 'asrb', 'bcc', 'bclr', 'bcs',
-        'beq', 'bge', 'bgt', 'bhi', 'bhs', 'bita', 'bitb', 'ble', 'blo', 'bls', 'blt',
-        'bmi', 'bne', 'bpl', 'bra', 'brclr', 'brn', 'brset', 'bset', 'bsr', 'bvc',
-        'bvs', 'cba', 'clc', 'cli', 'clr', 'clra', 'clrb', 'clv', 'cmpa', 'cmpb', 'com',
-        'coma', 'comb', 'cpd', 'cpx', 'cpy', 'daa', 'dec', 'deca', 'decb', 'des', 'dex',
-        'dey', 'eora', 'eorb', 'fdiv', 'idiv', 'inc', 'inca', 'incb', 'ins', 'inx', 'iny',
-        'jmp', 'jsr', 'ldaa', 'ldab', 'ldd', 'lds', 'ldx', 'ldy', 'lsl', 'lsla', 'lslb',
-        'lsld', 'lsr', 'lsra', 'lsrb', 'lsrd', 'mul', 'neg', 'nega', 'negb', 'nop',
-        'oraa', 'orab', 'psha', 'pshb', 'pshx', 'pshy', 'pula', 'pulb', 'pulx', 'puly',
-        'rol', 'rola', 'rolb', 'ror', 'rora', 'rorb', 'rti', 'rts', 'sba', 'sbca', 'sbcb',
-        'sec', 'sei', 'sev', 'staa', 'stab', 'std', 'stop', 'sts', 'stx', 'sty', 'suba',
-        'subb', 'subd', 'swi', 'tab', 'tap', 'tba', 'tets', 'tpa', 'tst', 'tsta', 'tstb',
-        'tsx', 'tsy', 'txs', 'tys', 'wai', 'xgdx', 'xgdy'
-    ]
-
-    control = True
-    
-    for palabra in palabras:
-        if re.search(palabra, texto, flags=re.IGNORECASE ) :
-            control = False
-    
-    return control
+from Funciones_apoyo import  *
 
 def pruebas():
 
@@ -145,7 +109,6 @@ def pruebas():
                 line +=1
             elif re.fullmatch(variables, linea):
                 line +=1
-                list_variables.append((Matcher[1],Matcher[6]))
             elif re.fullmatch(constantes, linea):
                 line +=1
             elif re.fullmatch(comentarios, linea):
@@ -154,7 +117,7 @@ def pruebas():
                 line +=1
             elif re.match(r'\s+', linea):
                 line +=1
-                precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+                precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
             else:
                 line +=1
     
@@ -180,6 +143,10 @@ def pruebas():
 
     print("PRUEBA VLS")
     for i in stack_compiler_vls:
+        print(i)
+    
+    print("PRUEBA HTML")
+    for i in stack_compiler_html:
         print(i)
 
 pruebas()
