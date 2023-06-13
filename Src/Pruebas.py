@@ -133,6 +133,18 @@ def pruebas():
     compilado_RELpt2("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
     compilado_saltos("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
 
+    fstack_compiler_vls = []
+    fstack_compiler_html = []
+
+    #linea en 3
+    for i in range (len(stack_compiler_vls)):
+        if stack_compiler_vls[i][2] == "ns":
+            fstack_compiler_vls.append((stack_compiler_vls[i][0],stack_compiler_vls[i][1],stack_compiler_vls[i][2],stack_compiler_vls[i][3],stack_compiler_vls[i][4], stack_compiler_vls[i][5]))
+    
+    #linea en 6
+    for i in range (len(stack_compiler_html)):
+        if stack_compiler_html[i][5] == "ns":
+            fstack_compiler_html.append((stack_compiler_html[i][0],stack_compiler_html[i][1],stack_compiler_html[i][2],stack_compiler_html[i][3],stack_compiler_html[i][4], stack_compiler_html[i][5],stack_compiler_html[i][6],stack_compiler_html[i][7],stack_compiler_html[i][8]))
 
     print("PRUEBA CONSTANTES")
     for i in list_constantes:
@@ -155,11 +167,11 @@ def pruebas():
         print(i)
 
     print("PRUEBA VLS")
-    for i in stack_compiler_vls:
+    for i in fstack_compiler_vls:
         print(i)
     
     print("PRUEBA HTML")
-    for i in stack_compiler_html:
+    for i in fstack_compiler_html:
         print(i)
 
 pruebas()
