@@ -1,6 +1,7 @@
 import re
 from Precompilado import *
 from Funciones_apoyo import  *
+from Poscompilado import  *
 
 def pruebas():
 
@@ -47,27 +48,34 @@ def pruebas():
         INDY.append(line)
     f_indy.close()
     #---------------------------------------------
-
-    #EXPRESIONES REGULARES PARA CPSAS QUE NO SON INSTRUCCIONES
-
-    variables = re.compile(r"(([A-Z0-9]|\_)+)((\s)+EQU(\s)+)(\$00[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
-    constantes = re.compile(r"(([A-Z0-9]|\_)+)(\s)+(EQU)(\s)+(\$10[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
-    comentarios = re.compile(r"(\*(\w|\W)*)")
-    etiquetas = re.compile(r"(([A-Z]|[\_])*)", flags=re.IGNORECASE) #no debe detectar espacios ni lineas en blanco
-
     #ARREGLOS PARA EL COMPILADO
 
-    stack_compiler_vls = [] #(codigo objeto, linea de codigo original, sc , dir_mem, comentario)
+    stack_compiler_vls = [] #(codigo objeto, linea de codigo original, sc , line, dir_mem,  comentario)
     stack_compiler_s19 = [] #(codigo objeto en pila)
-    stack_compiler_html = [] #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, sc , dir_mem, comentario)
+    stack_compiler_html = [] #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, sc , line, dir_mem, comentario)
     stack_error = [] #(cadenas con los errores)
     list_labels = [] #(cadenas con las etiquetas)
     list_variables = []
     list_constantes = []
     list_comentarios = []
     line = 0
-    dir_mem = hex(8000)
+    ctrl = False
+    end = ""
+    
+    with open("down.ASC","r") as archivo:
+        for linea in archivo:
+            if re.fullmatch(r"^((END(\s)+\$8000?)|(END))$", linea.strip(), flags= re.IGNORECASE):
+                ctrl = True
+                end = linea.strip()
+    
+    #SOLO EJECUTAR SI YA SE PRESENTARA O SE ESTA SEGURO DE LA COMPILACION
+    if ctrl == False:
+        stack_error.append(CONS_010)
+    else:
+        borrar_linea("down.ASC", end)
 
+
+            
     with open("down.ASC","r") as archivo:
 
         for linea in archivo:
@@ -117,10 +125,13 @@ def pruebas():
                 line +=1
             elif re.match(r'\s+', linea):
                 line +=1
-                precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
+                precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
                 line +=1
     
+    compilado_RELpt2("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
+    compilado_saltos("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
+
     print("PRUEBA CONSTANTES")
     for i in list_constantes:
         print(i)

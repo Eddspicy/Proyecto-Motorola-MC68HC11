@@ -2,12 +2,7 @@ import re
 from Compilado import  *
 from Funciones_apoyo import  *
 
-def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios):
-    ER_REL = re.compile(r"^(B[CEGHLMNPRSV][ACEILNOQRST])(\s+[\w]{1,256})?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    ER_INH = re.compile(r"^([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY][ABDPSVXY]?)(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    ER_ALL5 = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s*#|\s*){1}(\d{1,5}|\$[0-9A-F]{2,4}|'\S{1}|%[0-1]{1,16}|\w+)(,[XY])?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    ER_OP = re.compile(r"^(\d{1,5}|\$[0-9A-F]{2,4}|'\S{1}|%[0-1]{1,16}|\w+)(,[XY])?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    
+def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     #Matcher =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
     if re.match(ER_REL, instruccion):
         grupos = re.split(ER_REL, instruccion)
@@ -18,14 +13,14 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
                 if nombre.strip() == list_labels[i][0]:
                     instruccion = instruccion.replace(grupos[2], " "+list_labels[i][0])
                     nombre = nombre.replace(nombre, "etiqueta")
-            compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
+            compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
         if nombre == grupos[2].strip():
             stack_error.append(CONS_003+str(line))
         print("instruccion relativa:"+instruccion)
 
     elif re.fullmatch(ER_INH, instruccion): #Aqui va el error de instrucción no lleva operando, pero lo puse abajo
         print("instruccion inherente:"+instruccion)
-        compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
+        compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
  
     elif re.match(ER_ALL5, instruccion):
         grupos = re.split(ER_ALL5, instruccion)
@@ -66,16 +61,10 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
                         stack_error.append(CONS_003+str(line))
 
                     print("Se asigno un valor:"+instruccion) #LLAMAR A COMPILADO AQUÍ SI ES VARIABLE, CONSTANTE O ETIQUETA
-                    """
-                    grupos[1] = grupos[1].lower()
-                    if grupos[1] in SALTOS:
-                        return False
-                    else:
-                    """
-                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
 
                 else:# PARA CASOS DONDE NO ES VARIABLE, CONSTANTE O ETIQUETA
-                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios)
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
                 stack_error.append(CONS_005+str(line))
         else:
