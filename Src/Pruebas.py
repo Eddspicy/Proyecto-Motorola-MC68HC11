@@ -133,6 +133,7 @@ def pruebas():
     compilado_RELpt2("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
     compilado_saltos("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
 
+
     print("PRUEBA CONSTANTES")
     for i in list_constantes:
         print(i)

@@ -6,8 +6,7 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
         if re.fullmatch(ER_REL, stack_compiler_vls[i][1]) and stack_compiler_vls[i][2] == "sc":
             grupos = re.split(ER_REL, stack_compiler_vls[i][1])
             diff = encuentra_linea(file_name, stack_compiler_vls[i][3], grupos[2].strip())
-
-            find = int(stack_compiler_vls[i][3]) - diff + 1
+            find = int(stack_compiler_vls[i][3]) - diff
 
             if diff >= 1:
                 for j in range (len(stack_compiler_vls)):
@@ -22,7 +21,6 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
                             stack_error.append(CONS_008+str(stack_compiler_vls[i][3]))
 
             elif diff < 0:
-                find = find - 2
                 for j in range (len(stack_compiler_vls)):
                     if stack_compiler_vls[j][3] == find:
                         rest = int(stack_compiler_vls[j][4][2:],16) - int(stack_compiler_vls[i][4][2:],16)
@@ -75,7 +73,7 @@ def asigna_operandos(i, stack_compiler_vls,stack_compiler_s19,stack_compiler_htm
     else:
         diff = encuentra_linea(file_name, stack_compiler_vls[i][3], grupos[3].strip())
 
-        find = int(stack_compiler_vls[i][3]) - diff + 1
+        find = int(stack_compiler_vls[i][3]) - diff
 
         if diff >= 1:
             for j in range (len(stack_compiler_vls)):
@@ -87,7 +85,6 @@ def asigna_operandos(i, stack_compiler_vls,stack_compiler_s19,stack_compiler_htm
                     stack_compiler_html.append((stack_compiler_vls[i][0], "r", opr, "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], comentario))
 
         elif diff < 0:
-            find = find - 2
             for j in range (len(stack_compiler_vls)):
                 if stack_compiler_vls[j][3] == find:
                     rest = int(stack_compiler_vls[j][4][2:],16) - int(stack_compiler_vls[i][4][2:],16)

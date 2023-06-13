@@ -144,37 +144,41 @@ def encuentra_linea(nombre_archivo, linea_codigo, palabra_buscar):
     with open(nombre_archivo, 'r') as archivo:
         lineas = archivo.readlines()  # Leer todas las líneas del archivo
 
-    # Buscar la primera aparición de la palabra en las líneas superiores
-    i = linea_codigo - 1
-    while i >= 0:
-        primera_palabra = lineas[i].rstrip().split()[0] if lineas[i].rstrip().split() else ''  # Extraer la primera palabra
-        if primera_palabra == palabra_buscar:
+    contador_lineas = 0  # Inicializar el contador de líneas
+    encontrada = False
+    hacia_abajo = False  # Bandera para rastrear si la búsqueda fue hacia abajo
+
+    # Buscar la primera aparición de la palabra en la línea especificada hacia arriba
+    for i, linea in reversed(list(enumerate(lineas[:linea_codigo]))):
+        linea = linea.rstrip('\n')
+        palabras = linea.split()
+        if palabras and palabras[0] == palabra_buscar:
+            encontrada = True
             break
-        i -= 1
+        contador_lineas += 1
 
-    # Contador de líneas
-    contador = 0
-
-    # Verificar si se encontró la palabra buscada en las líneas superiores
-    if i >= 0:  # Se encontró la palabra buscada
-        # Calcular el número de líneas hasta la línea encontrada
-        contador = linea_codigo - i - 1
-
-    else:  # No se encontró la palabra buscada
-        # Reiniciar el contador y la posición de búsqueda para buscar hacia abajo
-        i = linea_codigo
-
-        # Buscar la primera aparición de la palabra en las líneas inferiores
-        while i < len(lineas):
-            primera_palabra = lineas[i].rstrip().split()[0] if lineas[i].rstrip().split() else ''
-            if primera_palabra == palabra_buscar:
+    # Corregir el conteo, dado que contamos una línea adicional al encontrar la palabra
+    if encontrada:
+        contador_lineas -= 1
+    else:
+        # Si no se encuentra la palabra, busca hacia abajo
+        contador_lineas = 2  # Iniciar el contador en 2
+        hacia_abajo = True  # Establecer la bandera hacia_abajo en verdadero
+        for i, linea in enumerate(lineas[linea_codigo:], start=linea_codigo):
+            linea = linea.rstrip('\n')
+            palabras = linea.split()
+            if palabras and palabras[0] == palabra_buscar:
+                break
+            contador_lineas += 1  # Incrementar el contador de líneas
+        # Continuar contando hasta encontrar una línea que no sea vacía ni inicie con "*"
+        while i+1 < len(lineas):
+            siguiente_linea = lineas[i+1].rstrip('\n')
+            if siguiente_linea != '' and siguiente_linea[0] != '*':
                 break
             i += 1
+            contador_lineas += 1
 
-        # Calcular el número de líneas hasta la línea encontrada
-        if i < len(lineas):
-            contador = -(i - linea_codigo + 1)  # Cambiar el contador a negativo
-    return contador
+    return -contador_lineas if hacia_abajo else contador_lineas
 
 def incremento_memoria(len_cmp):
     inc = (len_cmp / 2)
