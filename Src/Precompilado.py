@@ -1,18 +1,16 @@
 import re
 
 #Errores
-CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:"
-CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:"
-CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:"
+CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:" #YA SE USO
+CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:" #YA SE USO
+CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:" #YA SE USO
 CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:" #YA SE USO
 CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:" #YA SE USO
-CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:"
-CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:" #YA SE USO
+CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:" #YA SE USO
+CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:" 
 CONS_008 = "008   SALTO RELATIVO MUY LEJANOE - Error en linea:"
-CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:"
+CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:" #YA SE USO
 CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
-CONS_011 = "011   ERROR DE SINTAXIS  - Error en linea:" #YA SE USO
-CONS_012 = "012   SE INGRESO ALGO QUE NADA QUE VER  - Error en linea:"
 
 # PROCESAR VARIABLES Y CONSTANTES DESDE AQUI PARA MANDARLAS CON SU VALOR DE OPERANDO O GENERAR LOS ERRORES, VER QUE HACER CON JMP SI AQUI O ALLA
 def verificar_palabra_reservada(texto):
@@ -73,41 +71,45 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
         if verificar_palabra_reservada(grupos[1]):
             print("Existe la palabra rservada:"+instruccion)
             
-            if re.fullmatch(r"[0-9]+", grupos[3]):
-                print("No se requiere hacer cambio de variable:"+instruccion)
+            if re.fullmatch(ER_OP, grupos[3]) != None:
+                if re.fullmatch(r"[0-9]+", grupos[3]):
+                    print("No se requiere hacer cambio de variable:"+instruccion)
             
-            elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
+                elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
                 
-                nombre = grupos[3]
-                #COMPROBACION DE VARIABLES
-                for i in range (len(list_variables)):
-                    if grupos[3] == list_variables[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_variables[i][1])
-                        nombre = nombre.replace(grupos[3], "variable")
+                    nombre = grupos[3]
+                    #COMPROBACION DE VARIABLES
+                    for i in range (len(list_variables)):
+                        if grupos[3] == list_variables[i][0]:
+                            instruccion = instruccion.replace(grupos[3], list_variables[i][1])
+                            nombre = nombre.replace(grupos[3], "variable")
                 
-                #COMPROBACION DE CONSTANTES
-                for i in range (len(list_constantes)):
-                    if grupos[3] == list_constantes[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
-                        nombre = nombre.replace(grupos[3], "constante")
+                    #COMPROBACION DE CONSTANTES
+                    for i in range (len(list_constantes)):
+                        if grupos[3] == list_constantes[i][0]:
+                            instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
+                            nombre = nombre.replace(grupos[3], "constante")
                 
-                #COMPROBACION DE ETIQUETAS
-                for i in range (len(list_labels)):
-                    if grupos[3] == list_labels[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_labels[i][0])
-                        nombre = nombre.replace(grupos[3], "etiqueta")
+                    #COMPROBACION DE ETIQUETAS
+                    for i in range (len(list_labels)):
+                        if grupos[3] == list_labels[i][0]:
+                            instruccion = instruccion.replace(grupos[3], list_labels[i][0])
+                            nombre = nombre.replace(grupos[3], "etiqueta")
 
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_001+str(line))
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_002+str(line))
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_003+str(line))
+                    if nombre == grupos[3]:
+                        stack_error.append(CONS_001+str(line))
+                    if nombre == grupos[3]:
+                        stack_error.append(CONS_002+str(line))
+                    if nombre == grupos[3]:
+                        stack_error.append(CONS_003+str(line))
 
-                print("Se asigno un valor:"+instruccion)
-
+                    print("Se asigno un valor:"+instruccion)
+            else:
+                stack_error.append(CONS_005+str(line))
         else:
             stack_error.append(CONS_004+str(line))
+    else:
+        stack_error.append(CONS_006+str(line)) #falta tratar directiva fcb para que no llegue aqui
 
         """
         #PRINTS DE CONTROL DE GRUPOS
@@ -130,49 +132,4 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
     else:
         print("instruccinstruccion no coincide con el patrón:"+instruccion)
         print("----------------------------------------")
-
-    
-    elif re.fullmatch(ER_ALL5, instruccion):
-        grupos = re.split(ER_ALL5, instruccion)
-        
-        if verificar_palabra_reservada(grupos[1]):
-            print("Existe la palabra rservada:"+instruccion)
-
-            if re.fullmatch(r"[0-9]+", grupos[3]):
-            
-            if re.fullmatch(r"[0-9]+", grupos[3]):
-                print("No se requiere hacer cambio de variable:"+instruccion)
-            
-            elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
-                
-                nombre = grupos[3]
-                #COMPROBACION DE VARIABLES
-                for i in range (len(list_variables)):
-                    if grupos[3] == list_variables[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_variables[i][1])
-                        nombre = nombre.replace(grupos[3], "variable")
-                
-                #COMPROBACION DE CONSTANTES
-                for i in range (len(list_constantes)):
-                    if grupos[3] == list_constantes[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
-                        nombre = nombre.replace(grupos[3], "constante")
-                
-                #COMPROBACION DE ETIQUETAS
-                for i in range (len(list_labels)):
-                    if grupos[3] == list_labels[i][0]:
-                        instruccion = instruccion.replace(grupos[3], list_labels[i][0])
-                        nombre = nombre.replace(grupos[3], "etiqueta")
-
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_001+str(line))
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_002+str(line))
-                if nombre == grupos[3]:
-                    stack_error.append(CONS_003+str(line))
-
-                print("Se asigno un valor:"+instruccion)
-
-        else:
-            stack_error.append(CONS_004+str(line))
         """
