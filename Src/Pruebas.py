@@ -61,21 +61,25 @@ def pruebas():
     line = 0
     ctrl = False
     end = ""
+    org = []
     
     with open("down.ASC","r") as archivo:
         for linea in archivo:
             if re.fullmatch(r"^((END(\s)+\$8000?)|(END))$", linea.strip(), flags= re.IGNORECASE):
                 ctrl = True
                 end = linea.strip()
+            if re.match(r"^((0RG)(\s+)(\$[A-F0-9)]{4}))$", linea.strip(), flags= re.IGNORECASE):
+                org.append(linea.strip())
+
+    for i in range (len(org)):
+        borrar_linea("down.ASC", org[i]) 
     
     #SOLO EJECUTAR SI YA SE PRESENTARA O SE ESTA SEGURO DE LA COMPILACION
-    """
+
     if ctrl == False:
         stack_error.append(CONS_010)
     else:
         borrar_linea("down.ASC", end)
-    """
-
             
     with open("down.ASC","r") as archivo:
 
@@ -155,7 +159,7 @@ def pruebas():
     fstack_compiler_vls.clear()
     fstack_compiler_html.clear()
 
-
+    creacion_lst(list_comentarios, fostack_compiler_vls, list_labels, stack_error)
 
 #PRINTS DE CONTROL DE FLUJO
     print("-------------------------------------------------")

@@ -4,12 +4,12 @@ import re
 CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:" 
 CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:" 
 CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:" 
-CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:" 
-CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:" 
-CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:" 
+CONS_004 = "004   MNEMONICO INEXISTENTE - Error en linea:" 
+CONS_005 = "005   INSTRUCCION CARECE DE  OPERANDO(S) - Error en linea:" 
+CONS_006 = "006   INSTRUCCION NO LLEVA OPERANDO(S) - Error en linea:" 
 CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:" 
 CONS_008 = "008   SALTO RELATIVO MUY LEJANO - Error en linea:"
-CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:" 
+CONS_009 = "009   INSTRUCCION CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:" 
 CONS_010 = "010   NO SE ENCUENTRA END"
 
 #Saltos
@@ -192,3 +192,67 @@ def borrar_linea(archivo, cadena):
         for linea in lineas:
             if cadena not in linea:
                 file.write(linea)
+
+def insertar_texterr(texto_error):
+    return f"{texto_error}\n"
+
+
+def insertar_comentario(tupla):
+    comentario, linea = tupla
+    return f"{linea}:\t{comentario}\n"
+
+def insertar_lst(tupla):
+    cod_op, instruccion, _, linea, dir_mem, _ = tupla
+    dir_mem = dir_mem[2:].ljust(6)  # Asegura que dir_mem siempre tenga 6 caracteres
+    return f"{linea}:\t{dir_mem.upper()}({cod_op})\t\t:\t{instruccion}\n"
+
+def insertar_etiquetas(tupla):
+    etiqueta = tupla[0]
+    return f"{etiqueta}\n"
+
+def insertar_etiquetas_modificado(tupla, lineas):
+    etiqueta, _, linea = tupla
+    lineas[linea] = f"{linea}: {etiqueta}\n"
+
+def creacion_lst(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombre_archivo="archivo.lst"):
+    max_linea = max([tupla[1] for tupla in tuplas_comentario] + [tupla[3] for tupla in tuplas_lst])
+    lineas = [''] * (max_linea + 1)
+
+    for tupla in tuplas_comentario:
+        lineas[tupla[1]] = insertar_comentario(tupla)
+
+    for tupla in tuplas_lst:
+        lineas[tupla[3]] = insertar_lst(tupla)
+
+    for i in range(1, len(lineas)):
+        if lineas[i] == '':
+            lineas[i] = f"{i}:\n"
+
+    for tupla in tuplas_etiquetas:
+        insertar_etiquetas_modificado(tupla, lineas)
+
+    lineas.append('SYMBOLTABLE'.center(80) + '\n')
+
+    for tupla in tuplas_etiquetas:
+        lineas.append(insertar_etiquetas(tupla))
+
+    lineas.append('ERRORES'.center(80) + '\n')
+
+    for error in errores:
+        lineas.append(insertar_texterr(error))
+
+    with open(nombre_archivo, 'w') as f:
+        f.write("0:"+"\t"+"ORG $8000"+"\n")
+        f.writelines(lineas)
+
+"""
+def s19_file(vls_compiler):
+    cont = hex(32768)
+
+    for i in range(len(vls_compiler)):
+        cont = int(hex[2:],16) + 10
+        cont = hex(cont)
+        
+        if len(vls_compiler[i][0]) == 8
+        format = "<"+cont[2:].upper()+">"+ 
+"""
