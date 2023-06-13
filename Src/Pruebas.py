@@ -8,7 +8,7 @@ CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:"
 CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:"
 CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:"
 CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:"
-CONS_008 = "008   SALTO RELATIVO MUY LEJANOE - Error en linea:"
+CONS_008 = "008   SALTO RELATIVO MUY LEJANO - Error en linea:"
 CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:"
 CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
 
@@ -154,6 +154,10 @@ def pruebas():
 
     print("PRUEBA ERRORES")
     for i in stack_error:
+        print(i)
+
+    print("PRUEBA VLS")
+    for i in stack_compiler_vls:
         print(i)
 
 pruebas()

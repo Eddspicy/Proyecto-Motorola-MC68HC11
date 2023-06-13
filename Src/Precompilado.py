@@ -1,4 +1,5 @@
 import re
+from Compilado import  *
 
 #Errores
 CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:" #YA SE USO
@@ -8,7 +9,7 @@ CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:" #YA SE USO
 CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:" #YA SE USO
 CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:" #YA SE USO
 CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:" 
-CONS_008 = "008   SALTO RELATIVO MUY LEJANOE - Error en linea:"
+CONS_008 = "008   SALTO RELATIVO MUY LEJANO - Error en linea:"
 CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:" #YA SE USO
 CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
 
@@ -40,29 +41,26 @@ def verificar_palabra_reservada(texto):
     return control
 
 def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
-    ER_REL = re.compile(r"^(B[CEGHLMNPRSV][ACEILNOQRST])(\s*[\w]{1,256})?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
+    ER_REL = re.compile(r"^(B[CEGHLMNPRSV][ACEILNOQRST])(\s+[\w]{1,256})?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
     ER_INH = re.compile(r"^([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY][ABDPSVXY]?)(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
     ER_ALL5 = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s*#|\s*){1}(\d{1,5}|\$[0-9A-F]{2,4}|'\S{1}|%[0-1]{1,16}|\w+)(,[XY])?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    ER_IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s#)(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE) #se tiene que cambiar lo de los operandos
-    ER_DIR = re.compile(r"^([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?[RT]?)(\s){1}(\d{1,3}|^\$[0-9A-F]{2}$|'\S{1}|%[0-1]{1,8}|\w+)(\s*\*\s[A-Z]*)?$", flags= re.IGNORECASE)
-    ER_EXT = re.compile(r"^([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?$", flags=re.IGNORECASE)
-    ER_INDX = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?(,X)(\s\*[A-Z]*)?$", flags= re.IGNORECASE)
-    ER_INDY = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|^\$[0-9A-F]{2,4}$|'\S{1}|%[0-1]{1,16}|\w+)(\s*\*\s[A-Z]*)?(,Y)(\s\*[A-Z]*)?$", flags= re.IGNORECASE)
-    
     ER_OP = re.compile(r"^(\d{1,5}|\$[0-9A-F]{2,4}|'\S{1}|%[0-1]{1,16}|\w+)(,[XY])?(\s*\*\s?[\w|\W]*)?$", flags= re.IGNORECASE)
-    ER_MNE = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)$", flags= re.IGNORECASE)
-
     
     #Matcher =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
-    if re.fullmatch(ER_REL, instruccion):
-       #Matcher = re.split(REL, instruccion)
-       # print(Matcher)
-       #compilado_REL_p1(Matcher, mnemonicos_rel, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
-       print("instruccion relativa:"+instruccion)
+    if re.match(ER_REL, instruccion):
+        grupos = re.split(ER_REL, instruccion)
+        
+        nombre = grupos[2]
+        if re.fullmatch(r"(\s+[\w]{1,256})?", grupos[2], flags= re.IGNORECASE):
+            for i in range (len(list_labels)):
+                if nombre.strip() == list_labels[i][0]:
+                    instruccion = instruccion.replace(grupos[2], " "+list_labels[i][0])
+                    nombre = nombre.replace(nombre, "etiqueta")
+        if nombre == grupos[2].strip():
+            stack_error.append(CONS_003+str(line))
+        print("instruccion relativa:"+instruccion)
 
-    elif re.fullmatch(ER_INH, instruccion):
-        #Matcher = re.split(INH, instruccion)
-        #compilado_INH(Matcher, mnemonicos_inh, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
+    elif re.fullmatch(ER_INH, instruccion): #Aqui va el error de instrucción no lleva operando, pero lo puse abajo
         print("instruccion inherente:"+instruccion)
  
     elif re.match(ER_ALL5, instruccion):
@@ -92,18 +90,22 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
                 
                     #COMPROBACION DE ETIQUETAS
                     for i in range (len(list_labels)):
-                        if grupos[3] == list_labels[i][0]:
-                            instruccion = instruccion.replace(grupos[3], list_labels[i][0])
-                            nombre = nombre.replace(grupos[3], "etiqueta")
+                        if nombre.strip() == list_labels[i][0]:
+                            instruccion = instruccion.replace(grupos[3], " "+list_labels[i][0])
+                            nombre = nombre.replace(nombre, "etiqueta")
 
                     if nombre == grupos[3]:
                         stack_error.append(CONS_001+str(line))
                     if nombre == grupos[3]:
                         stack_error.append(CONS_002+str(line))
-                    if nombre == grupos[3]:
+                    if nombre == grupos[3].strip():
                         stack_error.append(CONS_003+str(line))
 
-                    print("Se asigno un valor:"+instruccion)
+                    print("Se asigno un valor:"+instruccion) #LLAMAR A COMPILADO AQUÍ SI ES VARIABLE, CONSTANTE O ETIQUETA
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+
+                else:# PARA CASOS DONDE NO ES VARIABLE, CONSTANTE O ETIQUETA
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
                 stack_error.append(CONS_005+str(line))
         else:
