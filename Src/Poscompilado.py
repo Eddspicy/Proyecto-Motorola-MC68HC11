@@ -15,7 +15,7 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
                         opr = complemento_a_dos(rest)
                         if rest <= 128:
                             stack_compiler_vls.append((stack_compiler_vls[i][0]+opr, stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3] , stack_compiler_vls[i][4],  grupos[3]))
-                            stack_compiler_s19.append(stack_compiler_vls[i][0]+opr)   
+                            stack_compiler_s19.append((stack_compiler_vls[i][0]+opr, "ns",  stack_compiler_vls[i][3]))   
                             stack_compiler_html.append((stack_compiler_vls[i][0], "r", opr, "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], grupos[3]))
                         else:
                             stack_error.append(CONS_008+str(stack_compiler_vls[i][3]))
@@ -27,7 +27,7 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
                         opr = complemento_a_dos(rest)
                         if rest <= 127:
                             stack_compiler_vls.append((stack_compiler_vls[i][0]+opr, stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3] , stack_compiler_vls[i][4],  grupos[3]))
-                            stack_compiler_s19.append(stack_compiler_vls[i][0]+opr)   
+                            stack_compiler_s19.append((stack_compiler_vls[i][0]+opr, "ns", stack_compiler_vls[i][3]))   
                             stack_compiler_html.append((stack_compiler_vls[i][0], "r", opr, "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], grupos[3]))
                         else:
                             stack_error.append(CONS_008+str(stack_compiler_vls[i][3]))
@@ -68,7 +68,7 @@ def asigna_operandos(i, stack_compiler_vls,stack_compiler_s19,stack_compiler_htm
     
     if re.fullmatch(r"\$[0-9A-F]{2,4}", grupos[3], flags= re.IGNORECASE):
         stack_compiler_vls.append((stack_compiler_vls[i][0]+grupos[3][1:], stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3] , stack_compiler_vls[i][4],  comentario))
-        stack_compiler_s19.append(stack_compiler_vls[i][0]+grupos[3][1:])   
+        stack_compiler_s19.append((stack_compiler_vls[i][0]+grupos[3][1:], "ns",  stack_compiler_vls[i][3]))   
         stack_compiler_html.append((stack_compiler_vls[i][0], "r", grupos[3][1:], "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], comentario))
     else:
         diff = encuentra_linea(file_name, stack_compiler_vls[i][3], grupos[3].strip())
@@ -81,7 +81,7 @@ def asigna_operandos(i, stack_compiler_vls,stack_compiler_s19,stack_compiler_htm
                     rest =  int(stack_compiler_vls[i][4][2:],16) - int(stack_compiler_vls[j][4][2:],16)
                     opr = complemento_a_dos(rest)
                     stack_compiler_vls.append((stack_compiler_vls[i][0]+opr, stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3] , stack_compiler_vls[i][4],  comentario))
-                    stack_compiler_s19.append(stack_compiler_vls[i][0]+opr)   
+                    stack_compiler_s19.append((stack_compiler_vls[i][0]+opr, "ns",  stack_compiler_vls[i][3]))   
                     stack_compiler_html.append((stack_compiler_vls[i][0], "r", opr, "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], comentario))
 
         elif diff < 0:
@@ -90,5 +90,5 @@ def asigna_operandos(i, stack_compiler_vls,stack_compiler_s19,stack_compiler_htm
                     rest = int(stack_compiler_vls[j][4][2:],16) - int(stack_compiler_vls[i][4][2:],16)
                     opr = complemento_a_dos(rest)
                     stack_compiler_vls.append((stack_compiler_vls[i][0]+opr, stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3] , stack_compiler_vls[i][4],  comentario))
-                    stack_compiler_s19.append(stack_compiler_vls[i][0]+opr)   
+                    stack_compiler_s19.append((stack_compiler_vls[i][0]+opr, "ns", stack_compiler_vls[i][3]))   
                     stack_compiler_html.append((stack_compiler_vls[i][0], "r", opr, "b", stack_compiler_vls[i][1], "ns", stack_compiler_vls[i][3], stack_compiler_vls[i][4], comentario))

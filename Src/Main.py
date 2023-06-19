@@ -3,8 +3,7 @@ from Precompilado import *
 from Funciones_apoyo import  *
 from Poscompilado import  *
 
-def pruebas():
-
+def main():
     #ABRIR MNEMONICOS
     REL = []
     f_rel = open("REL.txt", "r")
@@ -139,6 +138,7 @@ def pruebas():
 
     fstack_compiler_vls = []
     fstack_compiler_html = []
+    fstack_compiler_s19 = []
 
     #linea en 3
     for i in range (len(stack_compiler_vls)):
@@ -149,15 +149,22 @@ def pruebas():
     for i in range (len(stack_compiler_html)):
         if stack_compiler_html[i][5] == "ns":
             fstack_compiler_html.append((stack_compiler_html[i][0],stack_compiler_html[i][1],stack_compiler_html[i][2],stack_compiler_html[i][3],stack_compiler_html[i][4], stack_compiler_html[i][5],stack_compiler_html[i][6],stack_compiler_html[i][7],stack_compiler_html[i][8]))
+
+    for i in range (len(stack_compiler_s19)):
+        if stack_compiler_s19[i][1] == "ns":
+            fstack_compiler_s19.append((stack_compiler_s19[i][0], stack_compiler_s19[i][2]))
     
     stack_compiler_vls.clear()
     stack_compiler_html.clear()
+    stack_compiler_s19.clear()
 
     fostack_compiler_vls = sorted(fstack_compiler_vls, key=lambda x: x[3])
     fostack_compiler_html = sorted(fstack_compiler_html, key=lambda x: x[6])
+    fostack_compiler_s19 = sorted(fstack_compiler_s19, key=lambda x: x[1])
 
     fstack_compiler_vls.clear()
     fstack_compiler_html.clear()
+    fstack_compiler_s19.clear()
 
     creacion_lst(list_comentarios, fostack_compiler_vls, list_labels, stack_error)
 
@@ -199,9 +206,9 @@ def pruebas():
     
     print("-------------------------------------------------")
     print("PRUEBA S19")
-    for i in stack_compiler_s19:
+    for i in fostack_compiler_s19:
         print(i)
     print("-------------------------------------------------")
 
-pruebas()
+main()
 

@@ -11,7 +11,7 @@ def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, s
                 temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico)) + 1
                 dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
                 stack_compiler_vls.append((mnemonico.upper(), instruccion, "sc", line, dir_mem[0], grupos[3]))
-                stack_compiler_s19.append(mnemonico.upper())   
+                stack_compiler_s19.append((mnemonico.upper(), "sc", line))   
                 stack_compiler_html.append((mnemonico.upper(), "r", "relativo", "b", instruccion, "sc", line, dir_mem[0], grupos[3]))
 
 def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
@@ -24,7 +24,7 @@ def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stac
                 temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico))
                 dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
                 stack_compiler_vls.append((mnemonico.upper(), instruccion, "ns", line, dir_mem[0], grupos[2]))
-                stack_compiler_s19.append(mnemonico.upper())   
+                stack_compiler_s19.append((mnemonico.upper(), "ns", line))   
                 stack_compiler_html.append((mnemonico.upper(), "r", "inherente", "n", instruccion, "ns", line, dir_mem[0], grupos[2])) 
 
 #SE AGREGA UN UNO A LA MEMORIA EN LOS SALTOS EN REL PORQUE ES LO MAXIMO QUE PUEDE ALCANZAR AL TENER LA ETIQUETA TRADUCIDA Y EN LAS DE J PQ NO SE
@@ -49,7 +49,7 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("9D", instruccion, "sc", line, dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("9D")   
+            stack_compiler_s19.append(("9D", "sc", line))   
             stack_compiler_html.append(("9D", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(DIR)):
@@ -69,13 +69,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("BD", instruccion, "sc", line, dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("BD")   
+            stack_compiler_s19.append(("BD", "sc", line))   
             stack_compiler_html.append(("BD", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("7E", instruccion, "sc", line,dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("7E")   
+            stack_compiler_s19.append(("7E", "sc",line))   
             stack_compiler_html.append(("7E", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(EXT)):
@@ -95,13 +95,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("AD")   
+            stack_compiler_s19.append(("AD", "sc", line))   
             stack_compiler_html.append(("AD", "r", "salto", "b", instruccion, "sc", line,dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("6E", instruccion, "sc", line,dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("6E")   
+            stack_compiler_s19.append(("6E", "sc", line))   
             stack_compiler_html.append(("6E", "r", "salto", "b", instruccion, "sc", line,dir_mem[0], grupos[2]))
         else:
             for i in range (len(INDX)):
@@ -120,13 +120,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("18AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
-            stack_compiler_s19.append("18AD")   
+            stack_compiler_s19.append(("18AD", "sc", line))   
             stack_compiler_html.append(("18AD", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("186E", instruccion, "sc", line, dir_mem[0],  grupos[2]))
-            stack_compiler_s19.append("186E")   
+            stack_compiler_s19.append(("186E", "sc", line))   
             stack_compiler_html.append(("186E", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(INDY)):
@@ -143,7 +143,7 @@ def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, 
     temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico+operando))
     dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
     stack_compiler_vls.append((mnemonico+operando, instruccion, "ns", line,dir_mem[0],  comentario))
-    stack_compiler_s19.append(mnemonico+operando)   
+    stack_compiler_s19.append((mnemonico+operando, "ns", line))   
     stack_compiler_html.append((mnemonico, "r", operando, "b", instruccion, "ns", line, dir_mem[0], comentario)) 
 
 def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
