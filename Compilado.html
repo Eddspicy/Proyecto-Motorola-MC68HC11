@@ -1,0 +1,177 @@
+<html>
+<body>
+<pre>
+0:	ORG $8000
+1:	* PROGRAMA DOWNLOADER
+2:
+3:	*DECLARACION CONSTANTES
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+11:
+12:
+13:
+14:
+15:
+16:
+17:
+18:	*DECLARACION DE VARIABLES
+19:
+20:
+21:
+22:
+23:
+24:
+25:
+26:
+27:
+28:
+29: INICIO
+30:	8003  	(<span style='color: red;'>8E</span><span style='color: blue;'>00FF</span>)	:	LDS #$00FF
+31:	8005  	(<span style='color: red;'>BD</span><span style='color: blue;'>84</span>)	:	JSR  SERIAL
+32:
+33:
+34:	8008  	(<span style='color: red;'>7F</span><span style='color: blue;'>0001</span>)	:	CLR $0001
+35:	800B  	(<span style='color: red;'>7F</span><span style='color: blue;'>0002</span>)	:	CLR $0002
+36:	800E  	(<span style='color: red;'>7F</span><span style='color: blue;'>0003</span>)	:	CLR $0003
+37:	8011  	(<span style='color: red;'>7F</span><span style='color: blue;'>0004</span>)	:	CLR $0004
+38: CICLATE
+39:	8013  	(<span style='color: red;'>86</span><span style='color: blue;'>3F</span>)	:	LDAA #$3F
+40:	8016  	(<span style='color: red;'>B7</span><span style='color: blue;'>0000</span>)	:	STAA $0000
+41: CICLO
+42:	8019  	(<span style='color: red;'>B6</span><span style='color: blue;'>0000</span>)	:	LDAA $0000
+43:	801B  	(<span style='color: red;'>81</span><span style='color: blue;'>3F</span>)	:	CMPA #$3F
+44:	801D  	(<span style='color: red;'>27</span><span style='color: blue;'>FC</span>)	:	BEQ CICLO
+45:
+46:	8020  	(<span style='color: red;'>F6</span><span style='color: blue;'>0001</span>)	:	LDAB $0001
+47:	8022  	(<span style='color: red;'>26</span><span style='color: blue;'>EB</span>)	:	BNE SIGUET
+48: BORRA
+49:	8025  	(<span style='color: red;'>7F</span><span style='color: blue;'>0001</span>)	:	CLR $0001
+50:	8028  	(<span style='color: red;'>7F</span><span style='color: blue;'>0002</span>)	:	CLR $0002
+51:	802B  	(<span style='color: red;'>7F</span><span style='color: blue;'>0003</span>)	:	CLR $0003
+52:	802E  	(<span style='color: red;'>7F</span><span style='color: blue;'>0004</span>)	:	CLR $0004
+53:
+54:	8030  	(<span style='color: red;'>81</span><span style='color: blue;'>53</span>)	:	CMPA #$53
+55:	8032  	(<span style='color: red;'>26</span><span style='color: blue;'>E1</span>)	:	BNE CICLATE
+56:
+57:	8034  	(<span style='color: red;'>7E</span><span style='color: blue;'>DF</span>)	:	JMP  CICLATE
+58:
+59: SIGUET
+60:	8037  	(<span style='color: red;'>F6</span><span style='color: blue;'>0002</span>)	:	LDAB $0002
+61:	8039  	(<span style='color: red;'>26</span><span style='color: blue;'>F7</span>)	:	BNE SIGUEA
+62:	803B  	(<span style='color: red;'>81</span><span style='color: blue;'>54</span>)	:	CMPA #$54
+63:	803D  	(<span style='color: red;'>26</span><span style='color: blue;'>E8</span>)	:	BNE BORRA
+64:
+65:	803F  	(<span style='color: red;'>7E</span><span style='color: blue;'>D4</span>)	:	JMP  CICLATE
+66:
+67: SIGUEA
+68:	8042  	(<span style='color: red;'>F6</span><span style='color: blue;'>0003</span>)	:	LDAB $0003
+69:	8044  	(<span style='color: red;'>26</span><span style='color: blue;'>F7</span>)	:	BNE SIGUER
+70:	8046  	(<span style='color: red;'>81</span><span style='color: blue;'>41</span>)	:	CMPA #$41
+71:	8048  	(<span style='color: red;'>26</span><span style='color: blue;'>DD</span>)	:	BNE BORRA
+72:
+73:	804A  	(<span style='color: red;'>7E</span><span style='color: blue;'>C9</span>)	:	JMP  CICLATE
+74:
+75: SIGUER
+76:	804D  	(<span style='color: red;'>F6</span><span style='color: blue;'>0004</span>)	:	LDAB $0004
+77:	804F  	(<span style='color: red;'>26</span><span style='color: blue;'>F8</span>)	:	BNE SIGUEF
+78:	8051  	(<span style='color: red;'>81</span><span style='color: blue;'>52</span>)	:	CMPA #$52
+79:	8053  	(<span style='color: red;'>26</span><span style='color: blue;'>D2</span>)	:	BNE BORRA
+80:
+81:	8055  	(<span style='color: red;'>7E</span><span style='color: blue;'>BE</span>)	:	JMP  CICLATE
+82:
+83: SIGUEF
+84:	8057  	(<span style='color: red;'>81</span><span style='color: blue;'>54</span>)	:	CMPA #$54
+85:	8059  	(<span style='color: red;'>26</span><span style='color: blue;'>CC</span>)	:	BNE BORRA
+86: EXITO
+87:
+88:	805C  	(<span style='color: red;'>CE</span><span style='color: blue;'>0030</span>)	:	LDX #$0030
+89:	805F  	(<span style='color: red;'>7F</span><span style='color: blue;'>0005</span>)	:	CLR $0005
+90: BORRA_A
+91:	8062  	(<span style='color: red;'>7F</span><span style='color: blue;'>0006</span>)	:	CLR $0006
+92: LOOP
+93:	8065  	(<span style='color: red;'>B6</span><span style='color: blue;'>0005</span>)	:	LDAA $0005
+94:	8067  	(<span style='color: red;'>27</span><span style='color: blue;'>FE</span>)	:	BEQ LOOP
+95:
+96:	806A  	(<span style='color: red;'>7F</span><span style='color: blue;'>0005</span>)	:	CLR  $0005
+97:	806D  	(<span style='color: red;'>F6</span><span style='color: blue;'>0000</span>)	:	LDAB $0000
+98:	806F  	(<span style='color: red;'>E7</span><span style='color: blue;'>00</span>)	:	STAB $00,X
+99:	8070  	(<span style='color: red;'>08</span>)	:	INX
+100:	8072  	(<span style='color: red;'>C1</span><span style='color: blue;'>41</span>)	:	CMPB #$41
+101:	8074  	(<span style='color: red;'>26</span><span style='color: blue;'>EE</span>)	:	BNE BORRA_A
+102:	8077  	(<span style='color: red;'>7C</span><span style='color: blue;'>0006</span>)	:	INC  $0006
+103:	807A  	(<span style='color: red;'>B6</span><span style='color: blue;'>0006</span>)	:	LDAA $0006
+104:
+105:	807C  	(<span style='color: red;'>26</span><span style='color: blue;'>E9</span>)	:	BNE LOOP
+106:	807E  	(<span style='color: red;'>7E</span><span style='color: blue;'>0030</span>)	:	JMP  $0030
+107:
+108: SERIAL
+109:
+110:	8081  	(<span style='color: red;'>CC</span><span style='color: blue;'>302C</span>)	:	LDD   #$302C  * CONFIGURA PUERTO SERIAL
+111:
+112:
+113:	8083  	(<span style='color: red;'>86</span><span style='color: blue;'>00</span>)	:	LDAA  #$00
+114:
+115:
+116:	8085  	(<span style='color: red;'>86</span><span style='color: blue;'>FE</span>)	:	LDAA  #$FE    * CONFIG PUERTO D COMO SALIDAS (EXCEPTO PD0)
+117:
+118:
+119:
+120:	8087  	(<span style='color: red;'>86</span><span style='color: blue;'>04</span>)	:	LDAA  #$04
+121:	808A  	(<span style='color: red;'>B7</span><span style='color: blue;'>103C</span>)	:	STAA  $103C
+122:
+123:	808C  	(<span style='color: red;'>86</span><span style='color: blue;'>00</span>)	:	LDAA  #$00
+124:	808D  	(<span style='color: red;'>06</span>)	:	TAP
+125:	808E  	(<span style='color: red;'>39</span>)	:	RTS
+126:
+127:
+128:	***********************************
+129:	* ATENCION A INTERRUPCION SERIAL
+130:	***********************************
+131:
+132:
+133:	8091  	(<span style='color: red;'>B6</span><span style='color: blue;'>102E</span>)	:	LDAA $102E
+134:	8094  	(<span style='color: red;'>B6</span><span style='color: blue;'>102F</span>)	:	LDAA $102F
+135:	8097  	(<span style='color: red;'>B7</span><span style='color: blue;'>0000</span>)	:	STAA $0000
+136:	809A  	(<span style='color: red;'>7A</span><span style='color: blue;'>0005</span>)	:	DEC  $0005
+137:
+138:	809B  	(<span style='color: red;'>3B</span>)	:	RTI
+139:
+140:	***********************************
+141:	* VECTOR INTERRUPCION SERIAL
+142:	***********************************
+143:
+144:
+145:
+146:
+147:	***********************************
+148:	*RESET
+149:	***********************************
+150:
+151:
+152:	***********************************
+                                  SYMBOLTABLE                                   
+INICIO
+CICLATE
+CICLO
+BORRA
+SIGUET
+SIGUEA
+SIGUER
+SIGUEF
+EXITO
+BORRA_A
+LOOP
+SERIAL
+                                    ERRORES                                     
+010   NO SE ENCUENTRA END
+009   INSTRUCCION CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:151
+004   MNEMONICO INEXISTENTE - Error en linea:28
+004   MNEMONICO INEXISTENTE - Error en linea:131
+004   MNEMONICO INEXISTENTE - Error en linea:143
+006   INSTRUCCION NO LLEVA OPERANDO(S) - Error en linea:144
+004   MNEMONICO INEXISTENTE - Error en linea:150

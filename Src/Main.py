@@ -167,6 +167,7 @@ def main():
     fstack_compiler_s19.clear()
 
     creacion_lst(list_comentarios, fostack_compiler_vls, list_labels, stack_error)
+    creacion_HTML(list_comentarios, fostack_compiler_html, list_labels, stack_error)
 
 #PRINTS DE CONTROL DE FLUJO
     print("-------------------------------------------------")
@@ -211,4 +212,3 @@ def main():
     print("-------------------------------------------------")
 
 main()
-

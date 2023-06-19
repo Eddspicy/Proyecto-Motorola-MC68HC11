@@ -12,7 +12,7 @@ def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, s
                 dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
                 stack_compiler_vls.append((mnemonico.upper(), instruccion, "sc", line, dir_mem[0], grupos[3]))
                 stack_compiler_s19.append((mnemonico.upper(), "sc", line))   
-                stack_compiler_html.append((mnemonico.upper(), "r", "relativo", "b", instruccion, "sc", line, dir_mem[0], grupos[3]))
+                stack_compiler_html.append((mnemonico.upper(), "red", "relativo", "blue", instruccion, "sc", line, dir_mem[0], grupos[3]))
 
 def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     if re.fullmatch(ER_INH, instruccion):
@@ -25,7 +25,7 @@ def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stac
                 dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
                 stack_compiler_vls.append((mnemonico.upper(), instruccion, "ns", line, dir_mem[0], grupos[2]))
                 stack_compiler_s19.append((mnemonico.upper(), "ns", line))   
-                stack_compiler_html.append((mnemonico.upper(), "r", "inherente", "n", instruccion, "ns", line, dir_mem[0], grupos[2])) 
+                stack_compiler_html.append((mnemonico.upper(), "red", "inherente", "black", instruccion, "ns", line, dir_mem[0], grupos[2])) 
 
 #SE AGREGA UN UNO A LA MEMORIA EN LOS SALTOS EN REL PORQUE ES LO MAXIMO QUE PUEDE ALCANZAR AL TENER LA ETIQUETA TRADUCIDA Y EN LAS DE J PQ NO SE
 def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
@@ -50,7 +50,7 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("9D", instruccion, "sc", line, dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("9D", "sc", line))   
-            stack_compiler_html.append(("9D", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("9D", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(DIR)):
                 if re.fullmatch(acortador_mnemonicos(DIR[i]), grupos[1],  flags= re.IGNORECASE):
@@ -70,13 +70,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("BD", instruccion, "sc", line, dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("BD", "sc", line))   
-            stack_compiler_html.append(("BD", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("BD", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("7E", instruccion, "sc", line,dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("7E", "sc",line))   
-            stack_compiler_html.append(("7E", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("7E", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(EXT)):
                 if re.fullmatch(acortador_mnemonicos(EXT[i]), grupos[1],  flags= re.IGNORECASE):
@@ -96,13 +96,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("AD", "sc", line))   
-            stack_compiler_html.append(("AD", "r", "salto", "b", instruccion, "sc", line,dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("AD", "red", "salto", "blue", instruccion, "sc", line,dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("6E", instruccion, "sc", line,dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("6E", "sc", line))   
-            stack_compiler_html.append(("6E", "r", "salto", "b", instruccion, "sc", line,dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("6E", "red", "salto", "blue", instruccion, "sc", line,dir_mem[0], grupos[2]))
         else:
             for i in range (len(INDX)):
                 if re.fullmatch(acortador_mnemonicos(INDX[i]), grupos[1],  flags= re.IGNORECASE):
@@ -121,13 +121,13 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("18AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
             stack_compiler_s19.append(("18AD", "sc", line))   
-            stack_compiler_html.append(("18AD", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("18AD", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
         elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
             temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
             dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
             stack_compiler_vls.append(("186E", instruccion, "sc", line, dir_mem[0],  grupos[2]))
             stack_compiler_s19.append(("186E", "sc", line))   
-            stack_compiler_html.append(("186E", "r", "salto", "b", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_html.append(("186E", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
         else:
             for i in range (len(INDY)):
                 if re.fullmatch(acortador_mnemonicos(INDY[i]), grupos[1],  flags= re.IGNORECASE):
@@ -144,7 +144,7 @@ def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, 
     dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
     stack_compiler_vls.append((mnemonico+operando, instruccion, "ns", line,dir_mem[0],  comentario))
     stack_compiler_s19.append((mnemonico+operando, "ns", line))   
-    stack_compiler_html.append((mnemonico, "r", operando, "b", instruccion, "ns", line, dir_mem[0], comentario)) 
+    stack_compiler_html.append((mnemonico, "red", operando, "blue", instruccion, "ns", line, dir_mem[0], comentario)) 
 
 def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
     if insbytes == 2:

@@ -191,7 +191,7 @@ def insertar_etiquetas(tupla):
 def insertar_etiquetas_modificado(tupla, lineas):
     etiqueta, _, linea = tupla
     lineas[linea] = f"{linea}: {etiqueta}\n"
-    
+
 #___________________________________________________________________________________________________________________________________________________________#
 
 #------------------------------------------------CREACION DE ARCHIVO LST-----------------------------------------------------------------------------------#
@@ -201,8 +201,8 @@ def insertar_lst(tupla):
     dir_mem = dir_mem[2:].ljust(6)  # Asegura que dir_mem siempre tenga 6 caracteres
     return f"{linea}:\t{dir_mem.upper()}({cod_op})\t\t:\t{instruccion}\n"
 
-def creacion_lst(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombre_archivo="archivo.lst"):
-    max_linea = max([tupla[1] for tupla in tuplas_comentario] + [tupla[3] for tupla in tuplas_lst])
+def creacion_lst(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombre_archivo="Compilado.lst"):
+    max_linea = max([tupla[1] for tupla in tuplas_comentario] + [tupla[3] for tupla in tuplas_lst] + [tupla[2] for tupla in tuplas_etiquetas])
     lineas = [''] * (max_linea + 1)
 
     for tupla in tuplas_comentario:
@@ -241,19 +241,23 @@ def creacion_lst(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombr
 #------------------------------------------------CREACION DE ARCHIVO HTML-----------------------------------------------------------------------------------#
 
 def insertar_HTML(tupla):
-    cod_op, instruccion, _, linea, dir_mem, _ = tupla
-    dir_mem = dir_mem[2:].ljust(6)  # Asegura que dir_mem siempre tenga 6 caracteres
-    return f"{linea}:\t{dir_mem.upper()}({cod_op})\t\t:\t{instruccion}\n"
+    cod_mne, color_mne,cod_op, color_op, linea, _, nline, dir_mem, _ = tupla
+    dir_mem = dir_mem[2:].ljust(6)
+    #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, sc , line, dir_mem, comentario)
+    if cod_op == "inherente":
+        return f"{nline}:\t{dir_mem.upper()}\t(<span style='color: {color_mne};'>{cod_mne}</span>)\t:\t{linea.upper()}\n"
+    else:
+        return f"{nline}:\t{dir_mem.upper()}\t(<span style='color: {color_mne};'>{cod_mne}</span><span style='color: {color_op};'>{cod_op}</span>)\t:\t{linea.upper()}\n"
 
-def creacion_HTML(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombre_archivo="archivo.html"):
-    max_linea = max([tupla[1] for tupla in tuplas_comentario] + [tupla[3] for tupla in tuplas_lst])
+def creacion_HTML(tuplas_comentario, tuplas_html, tuplas_etiquetas, errores, nombre_archivo="Compilado.html"):
+    max_linea = max([tupla[1] for tupla in tuplas_comentario] + [tupla[6] for tupla in tuplas_html] + [tupla[2] for tupla in tuplas_etiquetas])
     lineas = [''] * (max_linea + 1)
 
     for tupla in tuplas_comentario:
         lineas[tupla[1]] = insertar_comentario(tupla)
 
-    for tupla in tuplas_lst:
-        lineas[tupla[3]] = insertar_lst(tupla)
+    for tupla in tuplas_html:
+        lineas[tupla[6]] = insertar_HTML(tupla)
 
     for i in range(1, len(lineas)):
         if lineas[i] == '':
@@ -273,6 +277,7 @@ def creacion_HTML(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nomb
         lineas.append(insertar_texterr(error))
 
     with open(nombre_archivo, 'w') as f:
+        f.write("<html>\n<body>\n<pre>\n")
         f.write("0:"+"\t"+"ORG $8000"+"\n")
         f.writelines(lineas)
 
