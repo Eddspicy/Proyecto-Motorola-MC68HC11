@@ -2,6 +2,7 @@ import re
 from Funciones_apoyo import  *
 from Precompilado import *
 from Poscompilado import  *
+from Archivos import  *
 
 def main():
     #ABRIR MNEMONICOS
