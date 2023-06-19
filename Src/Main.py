@@ -1,6 +1,6 @@
 import re
-from Precompilado import *
 from Funciones_apoyo import  *
+from Precompilado import *
 from Poscompilado import  *
 
 def main():
@@ -168,6 +168,7 @@ def main():
 
     creacion_lst(list_comentarios, fostack_compiler_vls, list_labels, stack_error)
     creacion_HTML(list_comentarios, fostack_compiler_html, list_labels, stack_error)
+    creacion_s19(fostack_compiler_s19)
 
 #PRINTS DE CONTROL DE FLUJO
     print("-------------------------------------------------")
@@ -194,7 +195,7 @@ def main():
     print("PRUEBA ERRORES")
     for i in stack_error:
         print(i)
-
+"""
     print("-------------------------------------------------")
     print("PRUEBA VLS")
     for i in fostack_compiler_vls:
@@ -210,5 +211,6 @@ def main():
     for i in fostack_compiler_s19:
         print(i)
     print("-------------------------------------------------")
+"""
 
 main()

@@ -235,6 +235,51 @@ def creacion_lst(tuplas_comentario, tuplas_lst, tuplas_etiquetas, errores, nombr
 #___________________________________________________________________________________________________________________________________________________________#
 
 #------------------------------------------------CREACION DE ARCHIVO S19------------------------------------------------------------------------------------#
+def contador_s19(index):
+    sequence = []  # Arreglo principal
+
+    # El bucle más externo recorre los números 8 y 9 para el primer dígito
+    for first_digit in range(8, 10):
+        # El bucle externo recorre desde 0 hasta 15 para el segundo dígito
+        for second_digit in range(16):
+            # Convierte el dígito a hexadecimal, elimina el prefijo '0x' y lo convierte a mayúsculas
+            second_hex = hex(second_digit)[2:].upper()
+            
+            # El bucle interno recorre desde 0 hasta 15 para el tercer dígito
+            for third_digit in range(16):
+                # Convierte el dígito a hexadecimal, elimina el prefijo '0x' y lo convierte a mayúsculas
+                third_hex = hex(third_digit)[2:].upper()
+                
+                # Genera el valor y lo agrega directamente a la secuencia
+                sequence.append(f"{first_digit}{second_hex}{third_hex}0")
+
+    # Verifica si el índice es válido
+    if index < 1 or index > len(sequence):
+        return "Índice inválido"
+    else:
+        return sequence[index - 1]  # Ajusta para el índice basado en 1
+
+def dividir_cadenas_s19(tuples):
+    hex_strings = [t[0] for t in tuples]  # Recoge todos los strings hexadecimales.
+    all_hex = ''.join(hex_strings)  # Une todos los strings.
+    split_hex = [all_hex[i:i+2] for i in range(0, len(all_hex), 2)]  # Divide en grupos de dos.
+
+    # Divide en listas de 16 elementos.
+    split_hex_arrays = [split_hex[i:i+16] for i in range(0, len(split_hex), 16)]
+    # Une los elementos en cada lista con un espacio y luego las convierte en strings.
+    result = [' '.join(array) for array in split_hex_arrays]
+    
+    return tuple(result)  # Convierte la lista en una tupla
+
+
+def creacion_s19(tuplas):
+    result = dividir_cadenas_s19(tuplas)
+    filename = "Compilado.s19"  # Define el nombre del archivo.
+
+    # Abre el archivo para escribir.
+    with open(filename, 'w') as file:
+        for i, array in enumerate(result, start=1):
+            file.write(f"<{contador_s19(i)}> {array}\n")  # Escribe en el archivo.
 
 #___________________________________________________________________________________________________________________________________________________________#
 
@@ -280,7 +325,4 @@ def creacion_HTML(tuplas_comentario, tuplas_html, tuplas_etiquetas, errores, nom
         f.write("<html>\n<body>\n<pre>\n")
         f.write("0:"+"\t"+"ORG $8000"+"\n")
         f.writelines(lineas)
-
-#50: 8028  (<span style="color: red;">7F0002</span>)  :  CLR $0002
-
 #___________________________________________________________________________________________________________________________________________________________#
