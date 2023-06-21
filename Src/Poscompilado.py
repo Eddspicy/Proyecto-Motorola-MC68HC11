@@ -1,6 +1,9 @@
 import re
 from Funciones_apoyo import  *
 
+#DESCRIPCION
+"""
+"""
 def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels):
     for i in range (len(stack_compiler_vls)):
         if re.fullmatch(ER_REL, stack_compiler_vls[i][1]) and stack_compiler_vls[i][2] == "sc":
@@ -32,6 +35,9 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
                         else:
                             stack_error.append(CONS_008+str(stack_compiler_vls[i][3]))
 
+#DESCRIPCION
+"""
+"""
 def compilado_saltos(file_name, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels):
     for i in range (len(stack_compiler_vls)):
        # if (stack_compiler_vls[i][2] == "sc" and re.match(r"JSR", stack_compiler_vls[i][1], flags= re.IGNORECASE)) or  (stack_compiler_vls[i][2] == "sc" and  re.match(r"JSR", stack_compiler_vls[i][1], flags= re.IGNORECASE)):

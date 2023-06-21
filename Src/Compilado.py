@@ -1,6 +1,13 @@
 import re
 from Funciones_apoyo import  *
 
+#DESCRIPCION
+"""
+Esta función se encarga de preprocesar las instrucciones relativas, mediante una expresión regulas especializada vuelve a comprobar que la instrucción si sea relativa. Después compara su mnemonico
+con una lista de mnemonicos relativos, si hace match con alguno toma su op code y lo guarda. En los arreglos de compilación se guarda el opcode de la instrucción, su dirección de memoria e idnicadores
+para que el programa rccuerde que estas instrucciones deben volverse a compilar por la parte de los saltos.
+"""
+
 def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     if re.fullmatch(ER_REL, instruccion):
         grupos = re.split(ER_REL, instruccion)
@@ -14,6 +21,12 @@ def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, s
                 stack_compiler_s19.append((mnemonico.upper(), "sc", line))   
                 stack_compiler_html.append((mnemonico.upper(), "red", "relativo", "blue", instruccion, "sc", line, dir_mem[0], grupos[3]))
 
+#DESCRIPCION
+"""
+Mediante una expresión regular especializaada, se compruba que efectivamente la isntrucción sea inhenrente, luego se compara contra una lista de mnemonicos inherentes. Al hacer macth con algun mnemonico
+inherente, el op code, la dirección de memoria generada, la linea de la isntrucción y algunos elemento más se guardan en los arreglos de compilación, indicando que estas isntrucciones por su naturaleza
+ya estan totalmente compiladas.
+"""
 def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     if re.fullmatch(ER_INH, instruccion):
         grupos = re.split(ER_INH, instruccion)
@@ -27,7 +40,9 @@ def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stac
                 stack_compiler_s19.append((mnemonico.upper(), "ns", line))   
                 stack_compiler_html.append((mnemonico.upper(), "red", "inherente", "black", instruccion, "ns", line, dir_mem[0], grupos[2])) 
 
-#SE AGREGA UN UNO A LA MEMORIA EN LOS SALTOS EN REL PORQUE ES LO MAXIMO QUE PUEDE ALCANZAR AL TENER LA ETIQUETA TRADUCIDA Y EN LAS DE J PQ NO SE
+#DESCRIPCION
+"""
+"""
 def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     
     if re.fullmatch(ER_IMM, instruccion):
@@ -138,7 +153,9 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
                     insbytes = acortador_bytes(INDY[i])
                     oprbytes = (len(hex_act[3][1:]) / 2)
                     compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
-
+#DESCRIPCION
+"""
+"""
 def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
     temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico+operando))
     dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
@@ -146,6 +163,9 @@ def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, 
     stack_compiler_s19.append((mnemonico+operando, "ns", line))   
     stack_compiler_html.append((mnemonico, "red", operando, "blue", instruccion, "ns", line, dir_mem[0], comentario)) 
 
+#DESCRIPCION
+"""
+"""
 def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
     if insbytes == 2:
         if len(mnemonico) == 2 and oprbytes == 1:
@@ -164,7 +184,9 @@ def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, 
             compilado(instruccion, operando.upper(), comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)        
         else:
             stack_error.append(CONS_007+str(line))
-            
+#DESCRIPCION
+"""
+"""            
 def conversor_operandos(instruccion, operando):
     if operando[0] == "$":
         return instruccion

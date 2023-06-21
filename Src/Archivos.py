@@ -1,3 +1,7 @@
+#DESCRIPCION
+"""
+"""
+
 #------------------------------------------------FUNCIONES PARA LST Y HTML-----------------------------------------------------------------------------------#
 def insertar_texterr(texto_error):
     return f"{texto_error}\n"

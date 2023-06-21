@@ -2,6 +2,16 @@ import re
 from Compilado import  *
 from Funciones_apoyo import  *
 
+#DESCRIPCION
+"""
+Esta función se encarga de reconocer una instrucción como relativa, inherente o el resto de modos, el reconocimiento se realiza mediante expresiones regulares. Dependiendo del tipo de instrucción en que 
+haya sido clasificada se procesa para: si es relativa identificar que su etiqueta exista y mandarla a compilado, si es inherente verificar la expresión regular y si la instrucción pertenece al resto de
+modos primero se comprueba que la instruccion no sea una inherente a la que se le hayan puesto incorrectamente operandos, luego se comprueba  a grandes rasgos con la ayuda de una expresión regular la existencia
+del mnemonico, despues se verifica que la instrucción del resto de modos no le faalte un operando coherente y finalmente se observa si el operando esta en forma de etiqueta, variable o constante. 
+Si el operando es variable, constante o etiqueta, se comprueba su existencia y se procesa para traducir su valor; si es etiqueta, en este punto solo se comprueba su existencia. 
+Si la instrucción que se esta procesando no cae en ningun error se llama a su respectiva función de compilado, del archivo de funciones de compilado.
+"""
+
 def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     #Matcher =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
     if re.match(ER_REL, instruccion):

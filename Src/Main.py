@@ -4,6 +4,16 @@ from Precompilado import *
 from Poscompilado import  *
 from Archivos import  *
 
+#DESCRIPCION
+"""
+    En este archivo se encuentra la función main del programa. Dicha función se encarga de abrir todos los archivos necesarios para la compilación: ya sea los mnemonicos y sus datos o el programa.
+    También se encarga de declarar las variables o arreglos más importantes del programa y realizar un import sobre los demás archivos para llamar correctamente a todas las funciones necesarias para
+    la compilación. Además en esta función existen algunos print de variables que permiten observar el flujo y correcta ejecución del compilador.
+"""
+#DESCRIPCION
+"""
+"""
+
 def main():
     #ABRIR MNEMONICOS
     REL = []
@@ -73,13 +83,20 @@ def main():
 
     for i in range (len(org)):
         borrar_linea("down.ASC", org[i]) 
-    
-    #SOLO EJECUTAR SI YA SE PRESENTARA O SE ESTA SEGURO DE LA COMPILACION
 
     if ctrl == False:
         stack_error.append(CONS_010)
     else:
         borrar_linea("down.ASC", end)
+
+    #DESCRIPCION
+    """
+        Los siguientes dos withopen se encargan del proceso principal de compilación mientras leen direcatamente del archivo el código ensamblador. El primer withopen con su ciclo for, se encarga de 
+        reconocer algunas directivas, todas las constantes, variables y etiquetas del programa. Al reconocerlas las guarda en distintos arreglos para poder recurrir a ellas ordenadamente cuando sea
+        necesario en la compilación. Se guardan algunas cosas adicionales como el numero de linea en que se encontraba cada cosa. Ignora la instrucciones, solo se dedica a lo mencionado para que todo eso}
+        exista coherentemente cuando se procesen las instrucciones.
+
+    """
             
     with open("down.ASC","r") as archivo:
 
@@ -112,6 +129,12 @@ def main():
                 stack_error.append(CONS_009+str(line))
     
     line = 0
+
+    #DESCRIPCION
+    """
+    Este with open junto a su ciclo for se encarga de ignorar directivas, etiquetas, vaariables y constantes para dedicarse a reconocer las instriucciones y compilarlas ya con los datos de los elementos
+    ignorados en este ciclo. Para las instrucciones primero se identifica que no caarezcan de un espacio relativo al margen y luego se procesan, para procesarlas se llama a la función de precompilado.
+    """
     
     with open("down.ASC","r") as archivo:
 
@@ -133,10 +156,20 @@ def main():
                 precompilado(linea.strip(), REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
                 line +=1
+    #DESCRIPCION
+    """
+    Se llaman a las funciones de poscompilado para compilar correctamente las intrucciones realtivas y las de saltos, pudiendo calcular el valor o dirección de memoria al que se debe realaizar el 
+    salto cuando todas las dempas instrucciones ya fueron compiladas.
+    """
     
     compilado_RELpt2("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
     compilado_saltos("down.ASC", stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels)
 
+#DESCRIPCION
+    """
+    Las siguientes lineas se encargan de depurar los arreglos de compilación, eliminan lineas reptidas, incompletas y elementos que ya no son necesarios luego de la compilación, además ordena todos
+    los arreglos por número de linea y elimina de memoria todos los elementos inecesaarios.
+    """
     fstack_compiler_vls = []
     fstack_compiler_html = []
     fstack_compiler_s19 = []
@@ -166,6 +199,11 @@ def main():
     fstack_compiler_vls.clear()
     fstack_compiler_html.clear()
     fstack_compiler_s19.clear()
+    
+    #DESCRIPCION
+    """
+    Las siguientes lineas llaman a todas las funciones que crean los archivos de compilación del programa.
+    """
 
     creacion_lst(list_comentarios, fostack_compiler_vls, list_labels, stack_error)
     creacion_HTML(list_comentarios, fostack_compiler_html, list_labels, stack_error)
