@@ -27,7 +27,7 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
         if nombre == grupos[2].strip():
             stack_error.append(CONS_003+str(line))
 
-    elif re.fullmatch(ER_INH, instruccion): #Aqui va el error de instrucción no lleva operando, pero lo puse abajo
+    elif re.fullmatch(ER_INH, instruccion):
         compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
  
     elif re.match(ER_ALL5, instruccion):
@@ -74,4 +74,4 @@ def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compile
         else:
             stack_error.append(CONS_004+str(line))
     else:
-        stack_error.append(CONS_006+str(line)) #falta tratar directiva fcb para que no llegue aqui
+        stack_error.append(CONS_006+str(line))

@@ -73,18 +73,13 @@ def main():
     line = 0
     ctrl = False
     end = ""
-    org = []
-    
+
+#Reconoce la directiva END.    
     with open("down.ASC","r") as archivo:
         for linea in archivo:
             if re.fullmatch(r"^((END(\s)+\$8000?)|(END))$", linea.strip(), flags= re.IGNORECASE):
                 ctrl = True
                 end = linea.strip()
-            if re.match(r"^((0RG)(\s+)(\$[A-F0-9)]{4}))$", linea.strip(), flags= re.IGNORECASE):
-                org.append(linea.strip())
-
-    for i in range (len(org)):
-        borrar_linea("down.ASC", org[i]) 
 
     if ctrl == False:
         stack_error.append(CONS_010)
@@ -142,7 +137,7 @@ def main():
 
         for linea in archivo:
             
-            linea = linea.rstrip() #se uso porque de alguna manera se tienen espacios, tabulaciones saltos a final de las lineas y las ER no detectan bien por eso
+            linea = linea.rstrip()
             if re.fullmatch(r'', linea):
                 line +=1
             elif re.fullmatch(variables, linea):

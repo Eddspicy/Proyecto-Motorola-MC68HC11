@@ -165,7 +165,6 @@ BORRA_A
 LOOP
 SERIAL
                                     ERRORES                                     
-010   NO SE ENCUENTRA END
 009   INSTRUCCION CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:151
 004   MNEMONICO INEXISTENTE - Error en linea:28
 004   MNEMONICO INEXISTENTE - Error en linea:131
