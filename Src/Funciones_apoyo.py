@@ -1,5 +1,9 @@
 import re
 
+#DESCRIPCION
+"""
+Son todos los errores posibles que pueden generarse en la compilación como constantes para que puedan llamarse desde cualquier función que necesite generar un error.
+"""
 #Errores
 CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:" 
 CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:" 
@@ -15,6 +19,10 @@ CONS_010 = "010   NO SE ENCUENTRA END"
 #Saltos NO RELATIVOS
 SALTOS  = ['jmp', 'jsr']
 
+#DESCRIPCION
+"""
+Son todos los mnemonicos del microprocesador dispuestos en un arreglo y sin ninguna información o dato adicional.
+"""
 #Mnemonicos en arreglo
 palabras = [
         'aba', 'abx', 'aby', 'adca', 'adcb', 'adda', 'addb', 'addd', 'anda', 'andb',
@@ -33,14 +41,26 @@ palabras = [
         'tsx', 'tsy', 'txs', 'tys', 'wai', 'xgdx', 'xgdy'
     ]
 
-#Variable direccion de memoria en lista para pasarla como "apuntador" y que pueda ser modificada dentro de todas las funciones
+#DESCRIPCION
+"""
+Variable direccion de memoria en lista para pasarla como "apuntador" y que pueda ser modificada dentro de todas las funciones
+"""
 dir_mem = [hex(32768)]
 
+#DESCRIPCION
+"""
+Esta función se encarga de calcular las direcciones de memoria para cada nueva instrucción teniedno como base siempre el ultimo vaalor de memoria de la ultima instruccion procesada.
+"""
 def incremento_memoria(len_cmp):
     inc = (len_cmp / 2)
     return int(inc)
 
 #EXPRESIONES REGULARES
+#DESCRIPCION
+"""
+Son todas las expresions regulares creadas por el equipo y probadas en REGEX 101 para identifcar distintos elementos del lenguaje ensamblador, como modos de direccionamiento, operandos, directivas, variables,
+constantes, comentarios unicos, etiquetas, etc.
+"""
 variables = re.compile(r"(([A-Z0-9]|\_)+)((\s)+EQU(\s)+)(\$00[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
 constantes = re.compile(r"(([A-Z0-9]|\_)+)(\s)+(EQU)(\s)+(\$10[0-9A-F]{2})", flags=re.IGNORECASE) #acepta simbolos en los nombres
 comentarios = re.compile(r"(\*(\w|\W)*)")
@@ -57,7 +77,11 @@ ER_EXT = re.compile(r"^([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s+
 ER_INDX = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s+){1}(\d{1,3}|\$[0-9A-F]{2}|'\S{1}|%[0-1]{1,8}|\w+)(\s*\\s[A-Z])?(,X)(\s*\\s?[\w|\W])?$", flags= re.IGNORECASE)
 ER_INDY = re.compile(r"^([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s+){1}(\d{1,3}|\$[0-9A-F]{2}|'\S{1}|%[0-1]{1,8}|\w+)(\s*\\s[A-Z])?(,Y)(\s*\\s?[\w|\W])?$", flags= re.IGNORECASE)
 
-#FUNCIONES PARA MANIPULACION DE CADENAS O DEL ARCHIVO
+
+#DESCRIPCION
+"""
+Funciones para manipulación de cadenas dentro de todo el programa o archivos.
+"""
 def verificar_palabra_reservada(texto):
     control = True  
     for palabra in palabras:
@@ -117,7 +141,12 @@ def borrar_linea(archivo, cadena):
             if cadena not in linea:
                 file.write(linea)
 
+
 #FUNCIONES PARA REALIZAR SALTOS
+#DESCRIPCION
+"""
+Esta función calcula el complemento A2 de un numero hexadecimal, pasandolo a binario, calculando y finalmente regresando el resultado en hexadecimal.
+"""
 def complemento_a_dos(numero):
     # Convertir el número a binario
     binario = bin(numero)[2:]  # Quitamos el prefijo '0b' del número binario
@@ -135,6 +164,13 @@ def complemento_a_dos(numero):
     hexadecimal = hex(int(complemento_dos, 2))[2:].upper()  # Quitamos el prefijo '0x' del número hexadecimal y lo convertimos a mayúsculas
 
     return hexadecimal
+
+#DESCRIPCION
+"""
+Esta función calcula la distancia en lineas de codigo entre una instrucción de salto y su etiqueta. Si la etiqueta existe después de la instrucción que la llama en el codigo, se devuelve un numero negativo
+para que pueda identificarse la dirección del salto, de caso contrario se devuelve un numero entero lo cual indica que la etiqueta fue declarada antes de la instrucción que la llama. Esta instrucción llama al archivo de codigo, para ser 
+más eficiente en un futuro debería llamar solo a un arreglo con el programa guardado.
+"""
 
 def encuentra_linea(nombre_archivo, linea_codigo, palabra_buscar):
     with open(nombre_archivo, 'r') as archivo:

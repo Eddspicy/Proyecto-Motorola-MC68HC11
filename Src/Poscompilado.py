@@ -3,6 +3,18 @@ from Funciones_apoyo import  *
 
 #DESCRIPCION
 """
+Este archivo esta destinado a terminar la compilación, calculando los saltos para las instrucciones con saltos.
+
+"""
+
+
+#DESCRIPCION
+"""
+Esta función recorre los arreglos de instrucciones compiladas para identificar las instrucciones relativas mediante su expresión regular y el indicador que se le puso en la parte de compilado "sc o second compile".
+Cuando se identifica una instrucción relativa se divide en subgrupos según la expresión regular relativa, con la etiqueta, los arreglos de compilación y el archivo del programa se calcula la distancia entre la instruccion 
+y a donde quiere ir, con ellos se identifica si la etiqueta esta despues o antes de donde se llamó. Luego de que la función identifica si la etiqueta esta antes o despues calcula el valor del salto realizando una resta de direciones de memoria
+y obteniendo su complemento "A2", también verifica que el salto no vaya más alla de 127 o 128 bytes según la dirección del mismo, si el salto supera los bytes máximos se provoca el error "salto relativo muy lejano". De lo contrario
+se agrega de nuevo a los arreglos de compilación la instrucción realtiva totalmente compilada con su operando de salto.
 """
 def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels):
     for i in range (len(stack_compiler_vls)):
@@ -37,6 +49,10 @@ def compilado_RELpt2(file_name, stack_compiler_vls, stack_compiler_s19, stack_co
 
 #DESCRIPCION
 """
+Similar a las instrucciones relativas, se identifica con un marcador y su mnemonico las instrucciones de salto para el resto de modos que la usan. Al igual que en la función anterior, se identifica la dirección del salto
+y se calcula su valor con la resta de direcciones de memoria y su complemento "A2" (parte de eso se realiza en la función "asigna operandos", implementarlo en una función ahorro reescribir el mismo codigo varias veces para cada direcionamiento), 
+en este caso no importa la distancia del sato por lo cual no se toma en cuenta en comparación a las instrucciones relativas.
+Finalmente se agregan a los arreglos de compilación las instrucciones totalmente compiladas y con el indicador de que no necesitan volver a ser procesadas "nc o no compile"
 """
 def compilado_saltos(file_name, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, list_labels):
     for i in range (len(stack_compiler_vls)):

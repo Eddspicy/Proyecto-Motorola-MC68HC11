@@ -10,8 +10,10 @@ from Archivos import  *
     También se encarga de declarar las variables o arreglos más importantes del programa y realizar un import sobre los demás archivos para llamar correctamente a todas las funciones necesarias para
     la compilación. Además en esta función existen algunos print de variables que permiten observar el flujo y correcta ejecución del compilador.
 """
-#DESCRIPCION
+
+#NOTA
 """
+ES IMPORTANTE CAMBIAR EL NOMBRE DEL ARCHIVO EN TODAS LAS FUNCIONES DONDE SE USA EL ARCHIVO DEL PROGRAMA SI SE REQUIERE USAR OTRO, PARA SU CORRECTA COMPILACIÓN.
 """
 
 def main():

@@ -1,5 +1,9 @@
 #DESCRIPCION
 """
+Estas funciones usan la biblioteca de input and output de python para generar y escribir archivos. Se generan ciclos que dan el formato necesario para disntintas partes del codigo segun el formato de cada archivo.
+Para lograr compilar bien se utilizan los arreglos de compilación depurados, con los indicaadores de ayuda como identificador para cada parte de la instrucción compilada, los colores para el html, las lineas del programa. ect.
+Finalmente, luego de todos los ciclos de formato, se escriben todas las lineas formatedas correctamente con writelines. Existen funciones para cada tipo de archivo que se debe crear y hay algunos que comparten funciones
+por las similitudes del formato como el LST y el HTML.
 """
 
 #------------------------------------------------FUNCIONES PARA LST Y HTML-----------------------------------------------------------------------------------#

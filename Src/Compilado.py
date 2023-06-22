@@ -23,8 +23,8 @@ def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, s
 
 #DESCRIPCION
 """
-Mediante una expresión regular especializaada, se compruba que efectivamente la isntrucción sea inhenrente, luego se compara contra una lista de mnemonicos inherentes. Al hacer macth con algun mnemonico
-inherente, el op code, la dirección de memoria generada, la linea de la isntrucción y algunos elemento más se guardan en los arreglos de compilación, indicando que estas isntrucciones por su naturaleza
+Mediante una expresión regular especializaada, se compruba que efectivamente la instrucción sea inhenrente, luego se compara contra una lista de mnemonicos inherentes. Al hacer macth con algun mnemonico
+inherente, el op code, la dirección de memoria generada, la linea de la instrucción y algunos elemento más se guardan en los arreglos de compilación, indicando que estas instrucciones por su naturaleza
 ya estan totalmente compiladas.
 """
 def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
@@ -42,6 +42,12 @@ def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stac
 
 #DESCRIPCION
 """
+Esta función se encarga de identificar explicitamente el modo de direccionamiento entre los modos inmediato, directo, extendido e indexado. Laa función identifica mediante expresiones regulares especializadas
+para cada modo de direccionamiento y haciendo uso de la api de regex (expresiones regulares en python). Cuando la función identifica el modo de la instrucción, luego identiifca si es una instrucción de salto o no,
+si es de salto se realiza un proceso similar al compilado de las instrucciones relativas para terminar de compilar con los saltos después. Para las instrucciones que no son de saltos, se verifica que el mnemonico de la
+instrucción exista dentro del modo de direccionamiento, al realizarlo se identifica también el op code, los bytes de la instrucción y su operando; para compilar el operando se llama a la función "compilando operandos",
+dicha función se encarga de identificar el sistema numerico del operando o el codigo ascii de un caracter para guardarlo de forma hexadecimal el dato del operando. Con todos los datos obtenidos se llama a la función
+compilando operandos para continuaar con la compilación de una instrucción.
 """
 def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     
@@ -155,6 +161,9 @@ def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, s
                     compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
 #DESCRIPCION
 """
+Con el op code, los bytes de instruccion, el operando procesado y algunos otros datos como el numero de linea se guarda en todos los arreglos de compilación los datos de la instruicción totlmente compilada para que 
+a la hora de crear los archivos puedan mostrarse correctamente los bytes en hexadecimal de la compilación y el formato de cada archivo. Taabién se genera la dirección de memoria para la instrucción en conjunta, esta además
+de ser guardada en los arrreglos de compilación, será util para calcular los saltos y poder obtrener la compilación completa de instrucciones de salto como las relativas.
 """
 def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
     temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico+operando))
@@ -165,6 +174,9 @@ def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, 
 
 #DESCRIPCION
 """
+Esta función se asegura que el operando de la instrucción sea compatible con la misma y su modo, según la cantidad de bytes que puede tener la instrucción en el direccionamiento en que se identifico.
+Si los bytes del op code la instruccion y el operando son compatibles segun la cantidad de bytes posibles entonces se llama ala función final de compilado. Si los bytes llegarán a no ser compatibles, se genera
+el error de "magnitud de operando incorrecta"
 """
 def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
     if insbytes == 2:
@@ -186,6 +198,8 @@ def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, 
             stack_error.append(CONS_007+str(line))
 #DESCRIPCION
 """
+Según el simbolo que tenga el operando antes de el, la función identifica su sistema numerico, o si es la obtención del codigo ascii de un caracter. Luego de identificar, la función trata al operando
+para convertir sus datos en un dato hexadecimal que será parte de la instrucción.
 """            
 def conversor_operandos(instruccion, operando):
     if operando[0] == "$":
