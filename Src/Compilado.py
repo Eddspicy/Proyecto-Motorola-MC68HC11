@@ -1,189 +1,218 @@
 import re
+from Funciones_apoyo import  *
 
-#Errores
-CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:"
-CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:"
-CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:"
-CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:"
-CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:"
-CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:"
-CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:"
-CONS_008 = "008   SALTO RELATIVO MUY LEJANOE - Error en linea:"
-CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGEN - Error en linea:"
-CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
+#DESCRIPCION
+"""
+Esta función se encarga de preprocesar las instrucciones relativas, mediante una expresión regulas especializada vuelve a comprobar que la instrucción si sea relativa. Después compara su mnemonico
+con una lista de mnemonicos relativos, si hace match con alguno toma su op code y lo guarda. En los arreglos de compilación se guarda el opcode de la instrucción, su dirección de memoria e idnicadores
+para que el programa rccuerde que estas instrucciones deben volverse a compilar por la parte de los saltos.
+"""
 
-#falta agregar soporte de variables y etiquetas a las expresiones regulares, quiza esas se comprueban desde el precompilado y se sustituyen por su valor para cuando lleguen aquí
-#quiza la parte de label en la tupla y su cod no sirven o si pero es lo que se llena solo en relativo
-def compilado_REL_p1 (instruccion, mnemonicos, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem): #FALTA COMPILACION DE ESTE MODO, ES DIFERENTE A LOS OTROS
-    tostr = "".join(instruccion)
-    #Hacer un if para cuando no hay labels y un else para si, no se bien que onda con el acortador de op_code si despues le debo sumar algo más que es del label, quiza ponerlo como numero hex y sumarle en la p2 al campo de la tupla
-    #En p2 seria cuando al lb_cod se le suma y ahora no se como calular el numero de direccion de memoria aqui, olvidalo, avanzaria lo del op code mas 2 porque todas las direcciones son 8XXX
-    for i in mnemonicos:
-        if instruccion[1] == acortador_mnemonicos(i):
-                stack_compiler_vls.append((acortador_opcode(i),tostr,instruccion[2][0:], hex(0), instruccion[4]), hex(0))
-                stack_compiler_s19.push(acortador_opcode(i))
-                stack_compiler_html.append((acortador_opcode(i),"r","","b",tostr,instruccion[2][0:], hex(0), instruccion[4]), hex(0))
-        else:
-            stack_error.push(CONS_004+error_line)
-        #INTRODUCIR OPCODE DE LASA ETIQUETAS // se introduce cuando se compilo todo el demás código porque se debe saber en que direccion esta la siguiente direccion de memoria a la etiqueta
+def compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
+    if re.fullmatch(ER_REL, instruccion):
+        grupos = re.split(ER_REL, instruccion)
+        for i in range (len(REL)):
+            if re.fullmatch(acortador_mnemonicos(REL[i]), grupos[1],  flags= re.IGNORECASE):
+                mnemonico = acortador_opcode(REL[i])
+                mnemonico = eliminar_espacios(mnemonico)
+                temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico)) + 1
+                dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+                stack_compiler_vls.append((mnemonico.upper(), instruccion, "sc", line, dir_mem[0], grupos[3]))
+                stack_compiler_s19.append((mnemonico.upper(), "sc", line))   
+                stack_compiler_html.append((mnemonico.upper(), "red", "relativo", "blue", instruccion, "sc", line, dir_mem[0], grupos[3]))
 
+#DESCRIPCION
+"""
+Mediante una expresión regular especializaada, se compruba que efectivamente la instrucción sea inhenrente, luego se compara contra una lista de mnemonicos inherentes. Al hacer macth con algun mnemonico
+inherente, el op code, la dirección de memoria generada, la linea de la instrucción y algunos elemento más se guardan en los arreglos de compilación, indicando que estas instrucciones por su naturaleza
+ya estan totalmente compiladas.
+"""
+def compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
+    if re.fullmatch(ER_INH, instruccion):
+        grupos = re.split(ER_INH, instruccion)
+        for i in range (len(INH)):
+            if re.fullmatch(acortador_mnemonicos(INH[i]), grupos[1],  flags= re.IGNORECASE):
+                mnemonico = acortador_opcode(INH[i])
+                mnemonico = eliminar_espacios(mnemonico)
+                temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico))
+                dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+                stack_compiler_vls.append((mnemonico.upper(), instruccion, "ns", line, dir_mem[0], grupos[2]))
+                stack_compiler_s19.append((mnemonico.upper(), "ns", line))   
+                stack_compiler_html.append((mnemonico.upper(), "red", "inherente", "black", instruccion, "ns", line, dir_mem[0], grupos[2])) 
 
-def compilado_INH (instruccion, mnemonicos, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem): #FALTA COMPILACION DE ESTE MODO, ES DIFERENTE A LOS OTROS
-    tostr = "".join(instruccion)
-    for i in mnemonicos:
-        if instruccion[1] == acortador_mnemonicos(i):
-                dir_mem = calcular_dirmem(acortador_opcode(i), dir_mem)
-                stack_compiler_vls.append((acortador_opcode(i),tostr,"no label", 0, instruccion[4], dir_mem))
-                stack_compiler_s19.push(acortador_opcode(i))
-                stack_compiler_html.append((acortador_opcode(i),"r","no operando","n",tostr,"no label", 0, instruccion[4], dir_mem))
-        else:
-            stack_error.push(CONS_004+error_line)
-
-#FALTA TAMBIEN HACER BIEN TODO LO DE LOS ERRORES, AUNQUE YA PUEDE GUARDARLOS
-
-def compilado_ALL5 (instruccion, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, dir_mem):
-    print("ALL5")
-    IMM = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?)(\s#)(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    DIR = re.compile(r"([ABCELOS][BDIMNOPRU][ABCDPRSTXY][ABD]?[RT]?)(\s){1}(\d{1,3}|\$[0-9A-F]{2}|\$0[0-9A-F]|’[A-Za-z]{1})(\s\*[A-Z]*)?", flags= re.IGNORECASE) #Puede que la tercera condicion de operadores este de mas
-    EXT = re.compile(r"([ABCDEIJLNORST][BDEILMNOPRSTU][ABCDGLMPRSTXY][ABD]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    INDX = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,X)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    INDY = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,Y)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
+#DESCRIPCION
+"""
+Esta función se encarga de identificar explicitamente el modo de direccionamiento entre los modos inmediato, directo, extendido e indexado. Laa función identifica mediante expresiones regulares especializadas
+para cada modo de direccionamiento y haciendo uso de la api de regex (expresiones regulares en python). Cuando la función identifica el modo de la instrucción, luego identiifca si es una instrucción de salto o no,
+si es de salto se realiza un proceso similar al compilado de las instrucciones relativas para terminar de compilar con los saltos después. Para las instrucciones que no son de saltos, se verifica que el mnemonico de la
+instrucción exista dentro del modo de direccionamiento, al realizarlo se identifica también el op code, los bytes de la instrucción y su operando; para compilar el operando se llama a la función "compilando operandos",
+dicha función se encarga de identificar el sistema numerico del operando o el codigo ascii de un caracter para guardarlo de forma hexadecimal el dato del operando. Con todos los datos obtenidos se llama a la función
+compilando operandos para continuaar con la compilación de una instrucción.
+"""
+def compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     
-    tostr = "".join(instruccion) #SIRVE PARA VERFIFICAR EL DIRECCIONAMIENTO COMO CADENA MEDIANTE REGEX
-
-    #Instruccion =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
-
-    #COMPILADO IMM
-    if re.fullmatch(IMM, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_imm, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, tostr, dir_mem)
-    #COMPILADO DIR
-    if re.fullmatch(DIR, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_dir, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, tostr, dir_mem)
-    #COMPILADRO EXT
-    if re.fullmatch(EXT, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_ext, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, tostr, dir_mem) 
-    #COMPILADO INDX
-    if re.fullmatch(INDX, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_indx, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, tostr, dir_mem)
-    #COMPILADO INDY
-    if re.fullmatch(INDY, tostr):
-        comparacion_menemonicos(instruccion, mnemonicos_indy, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_labels, tostr, dir_mem)
-
-
-def comparacion_menemonicos(instruccion, mnemonicos, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, dir_mem):
-    for i in mnemonicos:
-    #MNEMONICO
-        if instruccion[1] == acortador_mnemonicos(i):
-             compilacion_ALL5(instruccion, i, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, acortador_opcode(i), dir_mem)
-        else:
-            stack_error.push(CONS_004+error_line)
-            
-
-def compilacion_ALL5(instruccion, cline, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, op_code, dir_mem):
-    #OPERANDOS DIFERENCIACION
-    verificador = instruccion[3]
-
-    #stack_compiler_vls = [] #(codigo objeto, linea de codigo original, label, lb_cod, comentario, dir_mem)
-    #stack_compiler_s19 = [] #(codigo objeto en pila)
-    #stack_compiler_html = [] #(codigo objeto mne, color mne, codigo objeto op, color op, linea de codigo original, label, lb_cod,  comentario, dir_mem)
-    #if len(instruccion[3][1:] Si la instruccion es su campo operando apartir del segundo digito, que ya no identifica el tipo de operando si no que es el operando,  es de tal longitud
-
-    if verificador[0] == "$":
-        if acortador_bytes(cline) == 1:
-            if len(instruccion[3][1:]) == 2 and int(instruccion[3][1:],16) <= 255:
-                dir_mem = calcular_dirmem(op_code+instruccion[3][1:2], dir_mem)
-                stack_compiler_vls.append((op_code+instruccion[3][1:2],tostr,"no label", 0, instruccion[4], dir_mem))
-                stack_compiler_s19.push(op_code+instruccion[3][1:2])
-                stack_compiler_html.append((op_code,"r",instruccion[3][1:2],"b",tostr,"no label", 0, instruccion[4], dir_mem))
-        elif acortador_bytes(cline) == 2:
-            if len(instruccion[3][1:]) == 4  and int(instruccion[3][1:],16) <= 255:
-                dir_mem = calcular_dirmem(op_code+instruccion[3][1:4], dir_mem)
-                stack_compiler_vls.append((op_code+instruccion[3][1:4],tostr,"no label", 0, instruccion[4], dir_mem))
-                stack_compiler_s19.push(op_code+instruccion[3][1:4])
-                stack_compiler_html.append((op_code,"r",instruccion[3][1:4],"b",tostr,"no label", 0, instruccion[4], dir_mem))
-        elif acortador_bytes(cline) == 3:
-            if len(instruccion[3][1:]) == 6  and int(instruccion[3][1:],16) <= 4095:
-                dir_mem = calcular_dirmem(op_code+instruccion[3][1:6], dir_mem)
-                stack_compiler_vls.append((op_code+instruccion[3][1:6],tostr,"no label", 0, instruccion[4], dir_mem))
-                stack_compiler_s19.push(op_code+instruccion[3][1:6])
-                stack_compiler_html.append((op_code,"r",instruccion[3][1:6],"b",tostr,"no label", 0, instruccion[4], dir_mem))
-        elif acortador_bytes(cline) == 4 or acortador_bytes(cline) == 5:
-            if len(instruccion[3][1:]) >= 8  and int(instruccion[3][1:],16) <= 65535:
-                dir_mem = calcular_dirmem(op_code+instruccion[3][1:], dir_mem)
-                stack_compiler_vls.append((op_code+instruccion[3][1:],tostr,"no label", 0, instruccion[4], dir_mem))
-                stack_compiler_s19.push(op_code+instruccion[3][1:])
-                stack_compiler_html.append((op_code,"r",instruccion[3][1:],"b",tostr,"no label", 0, instruccion[4], dir_mem))
-        else:
-            stack_error.push(CONS_007+error_line)
-
-    #CONVERSION ASCII
-    elif verificador[0] == "’":
-        conversion = hex(ord(instruccion[3][1:]))
-        comp_conv(conversion, cline, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, op_code, dir_mem)
-            
-    #CONVERSION BINARIO
-    elif verificador[0] == "%":
-        conversion = hex(int(instruccion[3][1:]),2)
-        comp_conv(conversion, cline, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, op_code, dir_mem)
-
-                
-    #CONVERSION DECIMAL
-    else:
-        conversion = hex(int(instruccion[3]))
-        comp_conv(conversion, cline, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, op_code, dir_mem)
-
-def comp_conv(conversion, cline, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error, error_line, list_label, tostr, op_code, dir_mem):
-        if acortador_bytes(cline) == 1:
-        #Se empieza de dos en adelante porque se descuenta el 0x de el formato hex
-            if len(conversion[2:]) == 2 and int(conversion,16) <= 255:
-                dir_mem = calcular_dirmem(op_code+conversion[2:3], dir_mem)
-                stack_compiler_vls.append((op_code+conversion[2:3],tostr,"no label", 0, conversion[4], dir_mem))
-                stack_compiler_s19.push(op_code+conversion[2:3])
-                stack_compiler_html.append((op_code,"r",conversion[2:3],"b",tostr,"no label", 0, conversion[4], dir_mem))
-        elif acortador_bytes(cline) == 2:
-            if len(conversion[2:]) == 4  and int(conversion,16) <= 255:
-                dir_mem = calcular_dirmem(op_code+conversion[2:5], dir_mem)
-                stack_compiler_vls.append((op_code+conversion[2:5],tostr,"no label", 0, conversion[4], dir_mem))
-                stack_compiler_s19.push(op_code+conversion[2:5])
-                stack_compiler_html.append((op_code,"r",conversion[2:5],"b",tostr,"no label", 0, conversion[4], dir_mem))
-        elif acortador_bytes(cline) == 3:
-            if len(conversion[2:]) == 6  and int(conversion,16) <= 4095:
-                dir_mem = calcular_dirmem(op_code+conversion[2:7], dir_mem)
-                stack_compiler_vls.append((op_code+conversion[2:7],tostr,"no label", 0, conversion[4], dir_mem))
-                stack_compiler_s19.push(op_code+conversion[2:7])
-                stack_compiler_html.append((op_code,"r",conversion[2:7],"b",tostr,"no label", 0, conversion[4], dir_mem))
-        elif acortador_bytes(cline) == 4 or acortador_bytes(cline) == 5:
-            if len(conversion[2:]) >= 8  and int(conversion,16) <= 65535:
-                dir_mem = calcular_dirmem(op_code+conversion[2:], dir_mem)
-                stack_compiler_vls.append((op_code+conversion[2:],tostr,"no label", 0, conversion[4], dir_mem))
-                stack_compiler_s19.push(op_code+conversion[2:])
-                stack_compiler_html.append((op_code,"r",conversion[2:],"b",tostr,"no label", 0, conversion[4], dir_mem))
-        else:
-            stack_error.push(CONS_007+error_line)
-
-def calcular_dirmem(cobj, old_dir_mem):
+    if re.fullmatch(ER_IMM, instruccion):
+        grupos = re.split(ER_IMM, instruccion)
+        for i in range (len(IMM)):
+            if re.fullmatch(acortador_mnemonicos(IMM[i]), grupos[1],  flags= re.IGNORECASE):
+                instruccion = conversor_operandos(instruccion, grupos[3])
+                hex_act = re.split(ER_IMM, instruccion)
+                mnemonico = acortador_opcode(IMM[i])
+                mnemonico = eliminar_espacios(mnemonico)
+                insbytes = acortador_bytes(IMM[i])
+                oprbytes = (len(hex_act[3][1:]) / 2)
+                compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
     
-    return old_dir_mem + hex(len(cobj) / 2)
+    elif re.fullmatch(ER_DIR, instruccion):
+        grupos = re.split(ER_DIR, instruccion)
 
-def acortador_mnemonicos(cadena):
-    cadena_cut = cadena.split(',')
-    if len(cadena_cut) > 0:
-        return cadena_cut[0]
-    else:
-        return ""
+        if re.fullmatch(r"JSR", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("9D", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("9D", "sc", line))   
+            stack_compiler_html.append(("9D", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
+        else:
+            for i in range (len(DIR)):
+                if re.fullmatch(acortador_mnemonicos(DIR[i]), grupos[1],  flags= re.IGNORECASE):
+                    instruccion = conversor_operandos(instruccion, grupos[3])
+                    hex_act = re.split(ER_DIR, instruccion)
+                    mnemonico = acortador_opcode(DIR[i])
+                    mnemonico = eliminar_espacios(mnemonico)
+                    insbytes = acortador_bytes(DIR[i])
+                    oprbytes = (len(hex_act[3][1:]) / 2)
+                    compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
 
-def acortador_bytes(cadena):
-    cadena_cut = cadena.split(',')
-    if len(cadena_cut) > 0:
-        bytes_op = int(cadena_cut[3])
-        return bytes_op
-    else:
-        return 0
+    elif re.fullmatch(ER_EXT, instruccion):
+        grupos = re.split(ER_EXT, instruccion)
 
-def acortador_opcode(cadena):
-    cadena_cut = cadena.split(',')
-    if len(cadena_cut) > 0:
-        op_code = cadena_cut[1]
-        return op_code
+        if re.fullmatch(r"JSR", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("BD", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("BD", "sc", line))   
+            stack_compiler_html.append(("BD", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
+        elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("7E", instruccion, "sc", line,dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("7E", "sc",line))   
+            stack_compiler_html.append(("7E", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
+        else:
+            for i in range (len(EXT)):
+                if re.fullmatch(acortador_mnemonicos(EXT[i]), grupos[1],  flags= re.IGNORECASE):
+                    instruccion = conversor_operandos(instruccion, grupos[3])
+                    hex_act = re.split(ER_EXT, instruccion)
+                    mnemonico = acortador_opcode(EXT[i])
+                    mnemonico = eliminar_espacios(mnemonico)
+                    insbytes = acortador_bytes(EXT[i])
+                    oprbytes = (len(hex_act[3][1:]) / 2)
+                    compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+
+    elif re.fullmatch(ER_INDX, instruccion):
+        grupos = re.split(ER_INDX, instruccion)
+
+        if re.fullmatch(r"JSR", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("AD", "sc", line))   
+            stack_compiler_html.append(("AD", "red", "salto", "blue", instruccion, "sc", line,dir_mem[0], grupos[2]))
+        elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("6E", instruccion, "sc", line,dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("6E", "sc", line))   
+            stack_compiler_html.append(("6E", "red", "salto", "blue", instruccion, "sc", line,dir_mem[0], grupos[2]))
+        else:
+            for i in range (len(INDX)):
+                if re.fullmatch(acortador_mnemonicos(INDX[i]), grupos[1],  flags= re.IGNORECASE):
+                    instruccion = conversor_operandos(instruccion, grupos[3])
+                    hex_act = re.split(ER_INDX, instruccion)
+                    mnemonico = acortador_opcode(INDX[i])
+                    mnemonico = eliminar_espacios(mnemonico)
+                    insbytes = acortador_bytes(INDX[i])
+                    oprbytes = (len(hex_act[3][1:]) / 2)
+                    compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+
+    elif re.fullmatch(ER_INDY, instruccion):
+        grupos = re.split(ER_INDY, instruccion)
+        if re.fullmatch(r"JSR", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("18AD", instruccion, "sc", line, dir_mem[0], grupos[2]))
+            stack_compiler_s19.append(("18AD", "sc", line))   
+            stack_compiler_html.append(("18AD", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
+        elif re.fullmatch(r"JMP", grupos[1], flags= re.IGNORECASE):
+            temporal = int(dir_mem[0][2:], 16) + incremento_memoria(2) + 1
+            dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+            stack_compiler_vls.append(("186E", instruccion, "sc", line, dir_mem[0],  grupos[2]))
+            stack_compiler_s19.append(("186E", "sc", line))   
+            stack_compiler_html.append(("186E", "red", "salto", "blue", instruccion, "sc", line, dir_mem[0], grupos[2]))
+        else:
+            for i in range (len(INDY)):
+                if re.fullmatch(acortador_mnemonicos(INDY[i]), grupos[1],  flags= re.IGNORECASE):
+                    instruccion = conversor_operandos(instruccion, grupos[3])
+                    hex_act = re.split(ER_INDY, instruccion)
+                    mnemonico = acortador_opcode(INDY[i])
+                    mnemonico = eliminar_espacios(mnemonico)
+                    insbytes = acortador_bytes(INDY[i])
+                    oprbytes = (len(hex_act[3][1:]) / 2)
+                    compilado_operandos(instruccion, hex_act[3][1:], grupos[5], mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+#DESCRIPCION
+"""
+Con el op code, los bytes de instruccion, el operando procesado y algunos otros datos como el numero de linea se guarda en todos los arreglos de compilación los datos de la instruicción totlmente compilada para que 
+a la hora de crear los archivos puedan mostrarse correctamente los bytes en hexadecimal de la compilación y el formato de cada archivo. Taabién se genera la dirección de memoria para la instrucción en conjunta, esta además
+de ser guardada en los arrreglos de compilación, será util para calcular los saltos y poder obtrener la compilación completa de instrucciones de salto como las relativas.
+"""
+def compilado(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
+    temporal = int(dir_mem[0][2:], 16) + incremento_memoria(len(mnemonico+operando))
+    dir_mem[0] = dir_mem[0].replace(dir_mem[0], hex(temporal))
+    stack_compiler_vls.append((mnemonico+operando, instruccion, "ns", line,dir_mem[0],  comentario))
+    stack_compiler_s19.append((mnemonico+operando, "ns", line))   
+    stack_compiler_html.append((mnemonico, "red", operando, "blue", instruccion, "ns", line, dir_mem[0], comentario)) 
+
+#DESCRIPCION
+"""
+Esta función se asegura que el operando de la instrucción sea compatible con la misma y su modo, según la cantidad de bytes que puede tener la instrucción en el direccionamiento en que se identifico.
+Si los bytes del op code la instruccion y el operando son compatibles segun la cantidad de bytes posibles entonces se llama ala función final de compilado. Si los bytes llegarán a no ser compatibles, se genera
+el error de "magnitud de operando incorrecta"
+"""
+def compilado_operandos(instruccion, operando, comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem):
+    if insbytes == 2:
+        if len(mnemonico) == 2 and oprbytes == 1:
+            compilado(instruccion, operando.upper(), comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+        else:
+            stack_error.append(CONS_007+str(line))
+    elif insbytes == 3:
+        if len(mnemonico) == 2 and oprbytes == 2:
+            compilado(instruccion, operando.upper(), comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+        elif len(mnemonico) == 4 and oprbytes == 1:
+            compilado(instruccion, operando.upper(), comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)
+        else:
+            stack_error.append(CONS_007+str(line))
+    elif insbytes == 4:
+        if len(mnemonico) == 4  and oprbytes == 2:
+            compilado(instruccion, operando.upper(), comentario, mnemonico, insbytes, oprbytes, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, dir_mem)        
+        else:
+            stack_error.append(CONS_007+str(line))
+#DESCRIPCION
+"""
+Según el simbolo que tenga el operando antes de el, la función identifica su sistema numerico, o si es la obtención del codigo ascii de un caracter. Luego de identificar, la función trata al operando
+para convertir sus datos en un dato hexadecimal que será parte de la instrucción.
+"""            
+def conversor_operandos(instruccion, operando):
+    if operando[0] == "$":
+        return instruccion
+    elif operando[0] == "'":
+        conversion = hex(ord(operando[1]))
+        instruccion = instruccion.replace(operando, "$"+str(conversion[2:]))
+        return instruccion
+    elif operando[0] == "%":
+        conversion = hex(int(operando[1:], 2))
+        instruccion = instruccion.replace(operando, "$"+str(conversion[2:]))
+        return instruccion
     else:
-        return 0
+        conversion = hex(int(operando, 10))
+        instruccion = instruccion.replace(operando, "$"+str(conversion[2:]))
+        return instruccion

@@ -1,56 +1,77 @@
 import re
-from Compilado import *
+from Compilado import  *
+from Funciones_apoyo import  *
 
-#Errores
-CONS_001 = "001   CONSTANTE INEXISTENTE - Error en linea:"
-CONS_002 = "002   VARIABLE INEXISTENTE - Error en linea:"
-CONS_003 = "003   ETIQUETA INEXISTENTE - Error en linea:"
-CONS_004 = "004   MNEMÓNICO INEXISTENTE - Error en linea:" #YA SE USO
-CONS_005 = "005   INSTRUCCIÓN CARECE DE  OPERANDO(S) - Error en linea:" #YA SE USO
-CONS_006 = "006   INSTRUCCIÓN NO LLEVA OPERANDO(S) - Error en linea:"
-CONS_007 = "007   MAGNITUD DE  OPERANDO ERRONEA - Error en linea:" #YA SE USO
-CONS_008 = "008   SALTO RELATIVO MUY LEJANOE - Error en linea:"
-CONS_009 = "009   INSTRUCCIÓN CARECE DE ALMENOS UN ESPACIO RELATIVO AL MARGENE - Error en linea:"
-CONS_010 = "010   NO SE ENCUENTRA END - Error en linea:"
-CONS_011 = "011   ERROR DE SINTAXIS  - Error en linea:" #YA SE USO
+#DESCRIPCION
+"""
+Esta función se encarga de reconocer una instrucción como relativa, inherente o el resto de modos, el reconocimiento se realiza mediante expresiones regulares. Dependiendo del tipo de instrucción en que 
+haya sido clasificada se procesa para: si es relativa identificar que su etiqueta exista y mandarla a compilado, si es inherente verificar la expresión regular y si la instrucción pertenece al resto de
+modos primero se comprueba que la instruccion no sea una inherente a la que se le hayan puesto incorrectamente operandos, luego se comprueba  a grandes rasgos con la ayuda de una expresión regular la existencia
+del mnemonico, despues se verifica que la instrucción del resto de modos no le faalte un operando coherente y finalmente se observa si el operando esta en forma de etiqueta, variable o constante. 
+Si el operando es variable, constante o etiqueta, se comprueba su existencia y se procesa para traducir su valor; si es etiqueta, en este punto solo se comprueba su existencia. 
+Si la instrucción que se esta procesando no cae en ningun error se llama a su respectiva función de compilado, del archivo de funciones de compilado.
+"""
 
-# PROCESAR VARIABLES Y CONSTANTES DESDE AQUI PARA MANDARLAS CON SU VALOR DE OPERANDO O GENERAR LOS ERRORES, VER QUE HACER CON JMP SI AQUI O ALLA
-
-def precompilado(cadena, mnemonicos_dir,mnemonicos_ext,mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, mnemonicos_inh, mnemonicos_rel, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem):
-    REL = re.compile(r"(B[CEGHLMNPRSV][ACEILNOQRST])(\s[A-ZA-Z]{1,256})?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    INH = re.compile(r"([ACDFILMNPRSTWX][ABDEGLNOPSTUWXY][ABCDGHILMOPRSTVXY][ABDPSVXY]?)(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    ALL5 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)(\s#|\s){1}(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})(,[XY])?(\s\*[A-Z]*)?", flags= re.IGNORECASE)
-    GP1 = re.compile(r"([ABCDEIJLNORST][BCDEILMNOPRSTU][ABCDEGLMPRSTXY][ABDELRT]?[RT]?)")
-    GP2 = re.compile(r"(\s#|\s){1}")
-    GP3 = re.compile(r"(\d{1,5}|\$[0-9A-F]{2,4}|’[A-Za-z]{1}|%[0-1]{1,16})")
-    
+def precompilado(instruccion, REL, INH, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem):
     #Matcher =[ ,mnemonico, espaacio_gato_ect, operando, comentario, ] [0,1,2,3,4,5,6]
-    if re.fullmatch(REL, cadena):
-       Matcher = re.split(REL, cadena)
-       # print(Matcher)
-       compilado_REL_p1(Matcher, mnemonicos_rel, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
+    if re.match(ER_REL, instruccion):
+        grupos = re.split(ER_REL, instruccion)
+        
+        nombre = grupos[2]
+        if re.fullmatch(r"(\s+[\w]{1,256})?", grupos[2], flags= re.IGNORECASE):
+            for i in range (len(list_labels)):
+                if nombre.strip() == list_labels[i][0]:
+                    instruccion = instruccion.replace(grupos[2], " "+list_labels[i][0])
+                    nombre = nombre.replace(nombre, "etiqueta")
+            compilado_RELpt1(instruccion, REL, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+        if nombre == grupos[2].strip():
+            stack_error.append(CONS_003+str(line))
 
-    elif re.fullmatch(INH, cadena):
-        Matcher = re.split(INH, cadena)
-        compilado_INH(Matcher, mnemonicos_inh, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
+    elif re.fullmatch(ER_INH, instruccion):
+        compilado_INH(instruccion, INH, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+ 
+    elif re.match(ER_ALL5, instruccion):
+        grupos = re.split(ER_ALL5, instruccion)
+        
+        if verificar_palabra_reservadainv(grupos[1]):           
+            if re.fullmatch(ER_OP, grupos[3]) != None:
+                if re.fullmatch(r"[0-9]+", grupos[3]):
+                    print("")
+                elif re.fullmatch(r"\w+", grupos[3], flags= re.IGNORECASE):
+                
+                    nombre = grupos[3]
+                    #COMPROBACION DE VARIABLES
+                    for i in range (len(list_variables)):
+                        if grupos[3] == list_variables[i][0]:
+                            instruccion = instruccion.replace(grupos[3], list_variables[i][1])
+                            nombre = nombre.replace(grupos[3], "variable")
+                
+                    #COMPROBACION DE CONSTANTES
+                    for i in range (len(list_constantes)):
+                        if grupos[3] == list_constantes[i][0]:
+                            instruccion = instruccion.replace(grupos[3], list_constantes[i][1])
+                            nombre = nombre.replace(grupos[3], "constante")
+                
+                    #COMPROBACION DE ETIQUETAS
+                    for i in range (len(list_labels)):
+                        if nombre.strip() == list_labels[i][0]:
+                            instruccion = instruccion.replace(grupos[3], " "+list_labels[i][0])
+                            nombre = nombre.replace(nombre, "etiqueta")
 
-    elif re.fullmatch(r"([A-Z])*",cadena) == None and  re.fullmatch(INH, cadena) == None and  re.fullmatch(REL, cadena) == None:
-        Matcher = re.split(ALL5, cadena)
-        if re.fullmatch(GP1, Matcher[1]):
-            #El mnemonico existe dentro de alguno de los 5 modos o es una subcadena de la ER valida
-            if re.fullmatch(GP2, Matcher[2]):
-                #La sintaxis es correcta para alguna de las 5
-                if re.fullmatch(GP3,  Matcher[3]):
-                    #El operando existe
-                    compilado_ALL5 (Matcher, mnemonicos_dir, mnemonicos_ext, mnemonicos_imm, mnemonicos_indx, mnemonicos_indy, stack_compiler_vls, stack_compiler_s19, stack_compiler_html,  stack_error,error_line, list_labels, dir_mem)
-                    Matcher.clear
-                else:
-                    print("No existe operando")
-                    stack_error.push(CONS_005+error_line)
+                    if nombre == grupos[3]:
+                        stack_error.append(CONS_001+str(line))
+                    if nombre == grupos[3]:
+                        stack_error.append(CONS_002+str(line))
+                    if nombre == grupos[3].strip():
+                        stack_error.append(CONS_003+str(line))
+
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
+
+                else:# PARA CASOS DONDE NO ES VARIABLE, CONSTANTE O ETIQUETA
+                    compilado_ALL5(instruccion, IMM, DIR, EXT, INDX, INDY, stack_compiler_vls, stack_compiler_s19, stack_compiler_html, stack_error, line, list_labels,list_variables, list_constantes, list_comentarios, dir_mem)
             else:
-                stack_error.push(CONS_011+error_line)
-    #DEBE HABER UN ELIF MAS PARA LA INSTRUCCION JMP
+                stack_error.append(CONS_005+str(line))
         else:
-           stack_error.push(CONS_004+error_line)
+            stack_error.append(CONS_004+str(line))
     else:
-        stack_error.push("no se que poner aqui")
+        stack_error.append(CONS_006+str(line))
